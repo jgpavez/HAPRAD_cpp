@@ -24,7 +24,7 @@ CXXFLAGS  += -Wall -fPIC $(ROOTCFLAGS) $(SET_DEBUG)
 endif
 
 LD        = g++
-LDFLAGS   = -O2 $(ROOTLDFLAGS)
+LDFLAGS   = -O2 $(ROOTLDFLAGS) -lgfortran
 SOFLAGS   = -Wl,-soname,$(notdir $@) -shared
 
 INCLUDES  := -I.
@@ -43,7 +43,17 @@ SRC_OBJ    := $(addprefix $(OBJ_DIR)/,$(SRC_CODE:.cxx=.o))
 DICT_CLASS := $(addprefix $(DICT_DIR)/,$(SRC_CLASS:.cxx=Dict.cxx))
 DICT_OBJ   := $(addprefix $(OBJ_DIR)/,$(SRC_CLASS:.cxx=Dict.o))
 
+FSRC_OBJ   := $(addprefix $(OBJ_DIR)/,$(patsubst %.f,%.o,$(wildcard *.f)))
+
 SH_LIB     := libTRadCor.so
+
+CERNLIBS   := -lpdflib804 -lmathlib -lphtools -lpacklib -lkernlib -lpawlib
+FLIBS      := $(CERNLIBS)
+
+FCC        := gfortran
+
+F77OPT     := -DLinux -ffixed-line-length-none -fdollar-ok \
+              -fno-second-underscore
 
 ##############################################################################
 
@@ -54,12 +64,25 @@ debug: lib
 debug: SET_DEBUG=-DDEBUG
 
 
+main_test: main_test.o
+	$(LD) $(LDFLAGS) $(ROOTLIBS) $(CERNLIBS) -Lslib -lTRadCor -o $@ $^
+
+main_test.o: main_test.c++
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+##############################################################################
+
+$(OBJ_DIR)/%.o: %.f
+	$(FCC) $(F77OPT) -c $< -o $@
+
+##############################################################################
+
 lib: checkdirs $(SLIB_DIR)/$(SH_LIB)
 
 include Makefile_depends
 
 
-$(SLIB_DIR)/$(SH_LIB): $(SRC_OBJ) $(DICT_OBJ)
+$(SLIB_DIR)/$(SH_LIB): $(SRC_OBJ) $(DICT_OBJ) $(FSRC_OBJ)
 	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
 
 
