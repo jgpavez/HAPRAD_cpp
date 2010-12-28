@@ -126,7 +126,7 @@ void TStructFunctionArray::Evaluate(Double_t tau, Double_t mu, Double_t R)
                                         tldPx2, tldPl, H1z, H2z, H3z, H4z);
 
         // Including kinematic shift due to photon emission
-        Double_t aa = tldNu * (tldZ - 2 * M * tldPl / Sqrt(tldLq)) / (2. * M * M);
+        Double_t aa = tldSx * (tldZ - 2 * M * tldPl / Sqrt(tldLq)) / (2. * M * M);
 
         Double_t h1 = tldZ * (2. * tldQ2 * tldX * H1z - tldPt2 * H4z) /
                     (M * tldQ2 * tldX);
