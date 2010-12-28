@@ -24,10 +24,10 @@ c-----Choise of the distribution
       call STRUCTM(XD,SCALE,UPV,DNV,USEA,DSEA,STR,CHM,BOT,TOP,GL)
       return
       end
-      
+
       subroutine exec_pkhff(ISET,ICHARGE,ZD,Q2D,uff,dff,sff,cff,bff,gff)
-      implicit none 
-      double precision ISET,ICHARGE,ZD,Q2D,uff(3),dff(3),sff(3),cff(3),bff(3),gff(3) 
+      implicit none
+      double precision ISET,ICHARGE,ZD,Q2D,uff(3),dff(3),sff(3),cff(3),bff(3),gff(3)
       call PKHFF(ISET,ICHARGE,ZD,Q2D,uff,dff,sff,cff,bff,gff)
       return
       end
