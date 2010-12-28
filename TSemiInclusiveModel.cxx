@@ -10,12 +10,12 @@
  */
 
 extern "C" {
-    void init_pdf_(int&, int&);
+    void init_pdf_(int*, int*);
 
-    void exec_structm_(double&, double&, double&, double&, double&, double&,
-                       double&, double&, double&, double&, double&);
+    void exec_structm_(double*, double*, double*, double*, double*, double*,
+                       double*, double*, double*, double*, double*);
 
-    void exec_pkhff_(int&, int&, double&, double&, double*, double*, double*,
+    void exec_pkhff_(int*, int*, double*, double*, double*, double*, double*,
                      double*, double*, double*);
 }
 
@@ -51,15 +51,16 @@ namespace HapradUtils {
         nc++;
         r = Sqrt(1. + Power(2 * kMassProton * X, 2) / q2);
         xi = 2.*X / (1 + r);
+        XD = xi;
 
         if (q2 > 1) SCALE = Sqrt(q2);
         else SCALE = 1.0000001;
 
-        if (nc == 1) init_pdf_(GPDF, SPDF);
+        if (nc == 1) init_pdf_(&GPDF, &SPDF);
 
         GL = 1.033;
 
-        exec_structm_(XD, SCALE, UPV, DNV, USEA, DSEA, STR, CHM, BOT, TOP, GL);
+        exec_structm_(&XD, &SCALE, &UPV, &DNV, &USEA, &DSEA, &STR, &CHM, &BOT, &TOP, &GL);
 
         Double_t ZD;
         if (Z > 0.01) ZD = Z;
@@ -75,9 +76,9 @@ namespace HapradUtils {
 
         Double_t uff[2], dff[2], sff[2], cff[2], bff[2], gff[2];
 
-        exec_pkhff_(ISET, ICHARGE, ZD, Q2D, uff, dff, sff, cff, bff, gff);
+        exec_pkhff_(&ISET, &ICHARGE, &ZD, &Q2D, uff, dff, sff, cff, bff, gff);
 
-        Double_t sgmpt = ac + bc * X + cc * Z + dc * Power(Z, 2) +
+        Double_t sgmpt = ac + bc * X + cc * Z + dc * Power(X, 2) +
                                                 ec * Power(Z, 2) + fc * X * Z;
 
         if (sgmpt < 0.02) sgmpt = 0.02;
@@ -156,7 +157,7 @@ Double_t h3(Double_t X, Double_t q2, Double_t Z)
     /* InitialiZed data */
     Double_t q0 = 1.;
     Double_t lambda = .25;
-    Double_t a = -3.6544e-4;
+    Double_t a = -3.6544 * Power(10,-4);
     Double_t a1 = -2.1855;
     Double_t a2 = 3.4176;
     Double_t b1 = -1.7567;
@@ -165,8 +166,7 @@ Double_t h3(Double_t X, Double_t q2, Double_t Z)
     if (q2 > q0) {
         return a * Power(X, a1) * Power((1 - X), a2) * Power(Z, b1) *
                    Power((1 - Z), b2) *
-                   Power((Log(q2 / Power(lambda, 2))) /
-                                   Power(Log(q0 / Power(lambda, 2)), 2), bb);
+                   Power((Log(q2 / Power(lambda, 2))) / Log(q0 / Power(lambda, 2)), bb);
     } else {
         return a * Power(X, a1) * Power((1 - X), a2) *
                    Power(Z, b1) * Power((1 - Z), b2);
@@ -184,8 +184,8 @@ Double_t h4(Double_t X, Double_t q2, Double_t Z)
     Double_t q0 = 1.;
     Double_t lambda = .25;
     Double_t a = .0010908;
-    Double_t a1 = -3.5265e-7;
-    Double_t a2 = 3.0276e-8;
+    Double_t a1 = -3.5265 * Power(10,-7);
+    Double_t a2 = 3.0276 * Power(10,-8);
     Double_t b1 = -.66787;
     Double_t b2 = 3.5868;
     Double_t bb = 6.8777;
