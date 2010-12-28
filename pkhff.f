@@ -5,7 +5,7 @@
 *                                                                     *
 *  as in S. Kretzer (kretzer@pa.msu.edu):                             *
 *                                                                     *
-*  `Fragmentaion Functions from Flavour-inclusive and Flavour-tagged  *
+*  'Fragmentaion Functions from Flavour-inclusive and Flavour-tagged  *
 *  e^+ e^- Annihilations';                                            *
 *  Phys. Rev. D 62, 054001 (2000)                                     *
 *                                                                     *
@@ -102,22 +102,22 @@
        IF (IFINI.NE.0) GOTO 16
       IF (ISET.EQ.1) THEN
        IIREAD=11
-       OPEN(IIREAD,FILE='plo.grid')
+       OPEN(IIREAD,FILE='haprad2/plo.grid')
       ELSEIF (ISET.EQ.2) THEN
        IIREAD=12
-       OPEN(IIREAD,FILE='pnlo.grid')
+       OPEN(IIREAD,FILE='haprad2/pnlo.grid')
        ELSEIF (ISET.EQ.3) THEN
        IIREAD=13
-       OPEN(IIREAD,FILE='klo.grid')
+       OPEN(IIREAD,FILE='haprad2/klo.grid')
       ELSEIF (ISET.EQ.4) THEN
        IIREAD=14
-       OPEN(IIREAD,FILE='knlo.grid')
+       OPEN(IIREAD,FILE='haprad2/knlo.grid')
       ELSEIF (ISET.EQ.5) THEN
        IIREAD=15
-       OPEN(IIREAD,FILE='hlo.grid')
+       OPEN(IIREAD,FILE='haprad2/hlo.grid')
       ELSEIF (ISET.EQ.6) THEN
        IIREAD=16
-       OPEN(IIREAD,FILE='hnlo.grid')
+       OPEN(IIREAD,FILE='haprad2/hnlo.grid')
 
 	ELSE
          WRITE(6,93)
