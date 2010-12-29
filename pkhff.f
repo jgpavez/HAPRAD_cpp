@@ -10,7 +10,7 @@
 *  Phys. Rev. D 62, 054001 (2000)                                     *
 *                                                                     *
 *  See above reference for details!                                   *
-*								      *
+*                                                                     *
 *  INPUT:     ISET   defines hadron and perturbative order            *
 *             ISET = 1  LO pion                                       *
 *                       (DATA FILE 'plo.grid'  UNIT=11)               *
@@ -68,58 +68,58 @@
       DIMENSION QS(NQ), ZF(NZ), ZT(NARG), NA(NARG), ARRF(NZ+NQ)
       COMMON / FRAGINI / IFINI
       SAVE ZU, ZD, ZS, ZC, ZB, ZG, NA, ARRF, ZUB, ZDB, ZSB
-* ... Z AND Q**2 VALUES OF THE GRID :
+C     Z AND Q**2 VALUES OF THE GRID :
        DATA QS / 0.8d0,
-     1           1.0d0, 1.3d0, 1.8d0, 2.7d0, 4.0d0, 6.4d0,
-     2           1.0d1, 1.6d1, 2.5d1, 4.0d1, 6.4d1,
-     3           1.0d2, 1.8d2, 3.2d2, 5.7d2,
-     4           1.0d3, 1.8d3, 3.2d3, 5.7d3,
-     5           1.0d4, 2.2d4, 4.6d4,
-     6           1.0d5, 2.2d5, 4.6d5,
-     7           1.d6 /
+     &           1.0d0, 1.3d0, 1.8d0, 2.7d0, 4.0d0, 6.4d0,
+     &           1.0d1, 1.6d1, 2.5d1, 4.0d1, 6.4d1,
+     &           1.0d2, 1.8d2, 3.2d2, 5.7d2,
+     &           1.0d3, 1.8d3, 3.2d3, 5.7d3,
+     &           1.0d4, 2.2d4, 4.6d4,
+     &           1.0d5, 2.2d5, 4.6d5,
+     &           1.d6 /
        DATA ZF / 0.0095d0, 0.01d0, 0.02d0 , 0.03d0, 0.04d0 , 0.05d0,
-     1           0.06d0  , 0.07d0, 0.08d0 , 0.09d0, 0.095d0, 0.1d0 ,
-     2           0.125d0 , 0.15d0, 0.175d0, 0.2d0 , 0.225d0, 0.25d0,
-     3           0.275d0 , 0.3d0 , 0.325d0, 0.35d0, 0.375d0, 0.4d0 ,
-     4           0.425d0 , 0.45d0, 0.475d0, 0.5d0 , 0.525d0, 0.55d0,
-     5           0.575d0 , 0.6d0 , 0.625d0, 0.65d0, 0.675d0, 0.7d0 ,
-     6           0.725d0 , 0.75d0, 0.775d0, 0.8d0 , 0.825d0, 0.85d0,
-     7           0.875d0 , 0.9d0 , 0.925d0, 0.95d0, 0.975d0, 0.99d0,
-     8             1.0d0 /
-*...CHECK OF Z AND Q2 VALUES :
-       IF ( (Z.LT.0.01D0) .OR. (Z.GT.1.0D0) ) THEN
-           WRITE(6,91)
-  91       FORMAT (2X,'PARTON INTERPOLATION: Z OUT OF RANGE')
-       stop
-       ENDIF
-       IF ( (Q2.LT.1.D0) .OR. (Q2.GT.1.D6) ) THEN
-           WRITE(6,92)
-  92       FORMAT (2X,'PARTON INTERPOLATION: Q2 OUT OF RANGE')
-       stop
-       ENDIF
-*...INITIALIZATION :
-*    SELECTION AND READING OF THE GRID :
-       IF (IFINI.NE.0) GOTO 16
-      IF (ISET.EQ.1) THEN
-       IIREAD=11
-       OPEN(IIREAD,FILE='haprad2/plo.grid')
-      ELSEIF (ISET.EQ.2) THEN
-       IIREAD=12
-       OPEN(IIREAD,FILE='haprad2/pnlo.grid')
-       ELSEIF (ISET.EQ.3) THEN
-       IIREAD=13
-       OPEN(IIREAD,FILE='haprad2/klo.grid')
-      ELSEIF (ISET.EQ.4) THEN
-       IIREAD=14
-       OPEN(IIREAD,FILE='haprad2/knlo.grid')
-      ELSEIF (ISET.EQ.5) THEN
-       IIREAD=15
-       OPEN(IIREAD,FILE='haprad2/hlo.grid')
-      ELSEIF (ISET.EQ.6) THEN
-       IIREAD=16
-       OPEN(IIREAD,FILE='haprad2/hnlo.grid')
+     &           0.06d0  , 0.07d0, 0.08d0 , 0.09d0, 0.095d0, 0.1d0 ,
+     &           0.125d0 , 0.15d0, 0.175d0, 0.2d0 , 0.225d0, 0.25d0,
+     &           0.275d0 , 0.3d0 , 0.325d0, 0.35d0, 0.375d0, 0.4d0 ,
+     &           0.425d0 , 0.45d0, 0.475d0, 0.5d0 , 0.525d0, 0.55d0,
+     &           0.575d0 , 0.6d0 , 0.625d0, 0.65d0, 0.675d0, 0.7d0 ,
+     &           0.725d0 , 0.75d0, 0.775d0, 0.8d0 , 0.825d0, 0.85d0,
+     &           0.875d0 , 0.9d0 , 0.925d0, 0.95d0, 0.975d0, 0.99d0,
+     &             1.0d0 /
 
-	ELSE
+* CHECK OF Z AND Q2 VALUES :
+      IF ( (Z.LT.0.01D0) .OR. (Z.GT.1.0D0) ) THEN
+         WRITE(6,91)
+  91     FORMAT (2X,'PARTON INTERPOLATION: Z OUT OF RANGE')
+         STOP
+      ENDIF
+      IF ( (Q2.LT.1.D0) .OR. (Q2.GT.1.D6) ) THEN
+          WRITE(6,92)
+  92      FORMAT (2X,'PARTON INTERPOLATION: Q2 OUT OF RANGE')
+      STOP
+      ENDIF
+* INITIALIZATION :
+* SELECTION AND READING OF THE GRID :
+      IF (IFINI.NE.0) GOTO 16
+      IF (ISET.EQ.1) THEN
+         IIREAD=11
+         OPEN(IIREAD,FILE='plo.grid')
+      ELSEIF (ISET.EQ.2) THEN
+         IIREAD=12
+         OPEN(IIREAD,FILE='pnlo.grid')
+       ELSEIF (ISET.EQ.3) THEN
+         IIREAD=13
+         OPEN(IIREAD,FILE='klo.grid')
+      ELSEIF (ISET.EQ.4) THEN
+         IIREAD=14
+         OPEN(IIREAD,FILE='knlo.grid')
+      ELSEIF (ISET.EQ.5) THEN
+         IIREAD=15
+         OPEN(IIREAD,FILE='hlo.grid')
+      ELSEIF (ISET.EQ.6) THEN
+         IIREAD=16
+         OPEN(IIREAD,FILE='hnlo.grid')
+      ELSE
          WRITE(6,93)
  93      FORMAT (2X,'PARTON INTERPOLATION: ISET OUT OF RANGE')
          stop
