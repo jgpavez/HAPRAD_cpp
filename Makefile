@@ -52,7 +52,7 @@ FLIBS      := $(CERNLIBS)
 
 FCC        := gfortran
 
-F77OPT     := -DLinux -ffixed-line-length-none -fdollar-ok \
+F77OPT     := -fPIC -DLinux -ffixed-line-length-none -fdollar-ok \
               -fno-second-underscore
 
 ##############################################################################
