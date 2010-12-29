@@ -28,7 +28,7 @@ LDFLAGS   = -O2 $(ROOTLDFLAGS) -lgfortran
 SOFLAGS   = -Wl,-soname,$(notdir $@) -shared
 
 INCLUDES  := -I.
-LIBS      := $(ROOTLIBS)
+LIBS      := $(ROOTLIBS) -lMathMore
 
 
 SLIB_DIR := slib

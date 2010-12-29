@@ -8,7 +8,7 @@
 #include "TThetaMatrix.h"
 #include "haprad_constants.h"
 #include "TMath.h"
-#include "Math/GaussLegendreIntegrator.h"
+#include "Math/GSLIntegrator.h"
 #include <iostream>
 
 
@@ -64,12 +64,12 @@ double TRV2LN::DoEval(double tauln) const
     TThetaMatrix theta(fRC);
     theta.Evaluate(tau, mu, 1, fPhiK);
 
-    ROOT::Math::GaussLegendreIntegrator ig;
+    ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kNONADAPTIVE);
 
     TPODINL podinl(fRC, tau, mu, fH, theta);
     ig.SetFunction(podinl);
-    ig.SetNumberPoints(300);
     ig.SetRelTolerance(fConfig->EpsRR());
+    ig.SetAbsTolerance(TMath::Power(10,-18));
 
     Double_t rmin = TMath::Power(10, -8);
     Double_t rmax = (fHadKin->Px2() - kMassC2) / factor;

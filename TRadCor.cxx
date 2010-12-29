@@ -4,7 +4,7 @@
 #include "TQQTPhi.h"
 #include "TBorn.h"
 #include "haprad_constants.h"
-#include "Math/GaussLegendreIntegrator.h"
+#include "Math/GSLIntegrator.h"
 #include <iostream>
 #ifdef DEBUG
 #include <iomanip>
@@ -326,10 +326,10 @@ void TRadCor::qqt(Double_t& tai)
 
     TQQTPhi qphi(this);
     if (fConfig.IntegratePhiRad() == 1) {
-        ROOT::Math::GaussLegendreIntegrator ig;
+        ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kNONADAPTIVE);
         ig.SetFunction(qphi);
-        ig.SetNumberPoints(450);
         ig.SetRelTolerance(fConfig.EpsPhiR());
+        ig.SetAbsTolerance(TMath::Power(10,-18));
         tai = ig.Integral(0, TMath::TwoPi());
         tai = N * kAlpha * tai / (kPi * kPi) / 4. / fInv.SqrtLq();
     } else if (fConfig.IntegratePhiRad() == 0) {
