@@ -54,7 +54,7 @@ double TRV2LN::DoEval(double tauln) const
     tau = TMath::Exp(tauln) - fInv->Q2() / fInv->Sx();
 
     Double_t costk, sintk;
-    costk = (fInv->Sx() - M * M * tau) / fInv->SqrtLq();
+    costk = (fInv->Sx() - 2 * M * M * tau) / fInv->SqrtLq();
 
     if (abs(costk) <= 1) {
         sintk = TMath::Sqrt(1. - costk * costk);
@@ -64,7 +64,7 @@ double TRV2LN::DoEval(double tauln) const
     }
 
     mu = (fHadKin->Eh() - fHadKin->Pl() * costk -
-            fHadKin->Ph() * sintk * TMath::Cos(fPhiK - fKin->PhiH())) / M;
+            fHadKin->Pt() * sintk * TMath::Cos(fPhiK - fKin->PhiH())) / M;
     factor = 1. + tau - mu;
 
     TThetaMatrix theta(fRC);
