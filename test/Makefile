@@ -14,7 +14,7 @@ CERNLIBS    := -lpdflib804 -lmathlib -lphtools -lpacklib -lkernlib -lpawlib
 CXX       := g++
 CXXFLAGS  += -O2 -Wall -fPIC $(ROOTCFLAGS)
 LD        = g++
-LDFLAGS   = -O2 $(ROOTLDFLAGS) -lgfortran
+LDFLAGS   = -O2 $(ROOTLDFLAGS) -lgfortran -Wl,-rpath,../slib
 
 INCLUDES  := -I..
 LIBS      := -L../slib -lTRadCor $(ROOTLIBS) -lMathMore $(CERNLIBS)
