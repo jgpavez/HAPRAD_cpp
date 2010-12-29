@@ -63,13 +63,6 @@ debug: lib
 
 debug: SET_DEBUG=-DDEBUG
 
-
-main_test: main_test.o
-	$(LD) $(LDFLAGS) $(ROOTLIBS) $(CERNLIBS) -Lslib -lTRadCor -o $@ $^
-
-main_test.o: main_test.c++
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
 ##############################################################################
 
 $(OBJ_DIR)/%.o: %.f
