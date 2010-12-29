@@ -292,31 +292,21 @@ void TRadCor::SPhiH(void)
     TDelta fDeltas(this);
     fDeltas.Evaluate();
 
-    Double_t sibt;
-    Int_t it_end = 3;
-
-    if (fConfig.PolarizationType() == 0) {
-        it_end = 1;
-    }
-
-    std::cout << "********** ita: " << ita
-            << " *********" << std::endl;
+    std::cout << "********** ita: " << 1 << " *********" << std::endl;
     TBorn fBornin(this);
     sigma_born = fBornin.GetValue(N);
-    BorninTest(sibt);
-    std::cout << "sib1" << sigma_born << std::endl;
-    std::cout << "sibt" << sibt << std::endl;
+    std::cout << "sib: " << sigma_born << std::endl;
     if (sigma_born == 0.0) {
-        tai[1] = 0.;
+        tai[0] = 0.;
     }
-    std::cout << "tai[" << 1
-            << "]\t"  << tai[1] << std::endl;
 
-    qqt(tai[1]);
+    qqt(tai[0]);
+    std::cout << "tai[" << 0
+            << "]\t"  << tai[0] << std::endl;
 
     Double_t extai1 = TMath::Exp(fDeltas.Inf());
     sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac()) +
-                                                            tai[1] + tai[2];
+                                                            tai[0] + tai[1];
 }
 
 
