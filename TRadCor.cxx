@@ -328,7 +328,7 @@ void TRadCor::qqt(Double_t& tai)
     if (fConfig.IntegratePhiRad() == 1) {
         ROOT::Math::GaussLegendreIntegrator ig;
         ig.SetFunction(qphi);
-        ig.SetNumberPoints(150);
+        ig.SetNumberPoints(450);
         ig.SetRelTolerance(fConfig.EpsPhiR());
         tai = ig.Integral(0, TMath::TwoPi());
         tai = N * kAlpha * tai / (kPi * kPi) / 4. / fInv.SqrtLq();

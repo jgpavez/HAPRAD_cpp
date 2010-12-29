@@ -71,7 +71,7 @@ double TQQTPhi::DoEval(double phi) const
 
     TRV2LN rv2ln(fRC, phi);
     ig.SetFunction(rv2ln);
-    ig.SetNumberPoints(100);
+    ig.SetNumberPoints(300);
     ig.SetRelTolerance(fConfig->EpsTau());
 
     double res = 0;

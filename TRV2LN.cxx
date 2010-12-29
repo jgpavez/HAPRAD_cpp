@@ -68,7 +68,7 @@ double TRV2LN::DoEval(double tauln) const
 
     TPODINL podinl(fRC, tau, mu, fH, theta);
     ig.SetFunction(podinl);
-    ig.SetNumberPoints(100);
+    ig.SetNumberPoints(300);
     ig.SetRelTolerance(fConfig->EpsRR());
 
     Double_t rmin = TMath::Power(10, -8);
