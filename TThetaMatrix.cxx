@@ -92,7 +92,7 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
         b2 = (- Lq * tau + Sp * Sx * tau + 2. * Sp * Q2) / 2.;
 
         c1 = Power((S * tau + Q2), 2) - (4. * (M2 * tau2 - Sx * tau - Q2) * m2);
-        c2 = Power((S * tau - Q2), 2) - (4. * (M2 * tau2 - Sx * tau - Q2) * m2);
+        c2 = - (4. * (M2 * tau2 - Sx * tau - Q2) * m2 - Power((X * tau - Q2), 2));
 
         bb = 1;
         if (c1 < 0) {
@@ -141,7 +141,7 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
         b11i   = bb * Power(z1, 2);
     }
 
-    const Double_t& zh = fKin->T();
+    const Double_t& zh = fKin->Z();
     const Double_t& V1 = fInv->V1();
     const Double_t& V2 = fInv->V2();
 
@@ -159,15 +159,15 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     (*this)[1][2] = 0.5 * (bi12 * tau * (2. * M2 * tau - Sx) -
                                             bi1pi2 * Sp + 4. * M2 * bb);
 
-    (*this)[2][0] = 1. * hi2 * (V1 * V2 - mh2 * Q2);
+    (*this)[2][0] =   2. * hi2 * (V1 * V2 - mh2 * Q2);
     (*this)[2][1] = - 2. * ((mh2 * tau - mu * vvm) * hi2 - bir * mu * vvp -
                             bi1pi2 * vvm * vvp + bi12 * tau * vvp * vvp);
     (*this)[2][2] = bi12 * tau * (mh2 * tau - mu * vvm) -
                     bi1pi2 * mu * vvp + 2. * mh2 * bb;
 
-    (*this)[3][0] = -1. * (V1 * Sx - 2. * S * vvp + Q2 * Sx * zh) * hi2;
+    (*this)[3][0] = - 2. * (V1 * Sx - 2. * S * vvp + Q2 * Sx * zh) * hi2;
     (*this)[3][1] = - 2. * bi12 * tau * vvp * Sp +
-                    bi1pi2 * (Sx * vvm + Sp * vvp) +
+                    bi1pi2 * (Sp * vvm + Sx * vvp) +
                     bir * (mu * Sp + 2. * vvp) +
                     hi2 * (Sx * (mu - 2. * tau * zh) + 2. * vvm);
     (*this)[3][2] = bi12 * tau * (Sx * (tau * zh - mu / 2.) - vvm) -
