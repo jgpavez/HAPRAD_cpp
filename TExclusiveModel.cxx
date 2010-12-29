@@ -55,8 +55,8 @@ void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t st,
     stlp = 0.0;
 
 //new variables
-    q2 = q2m;
-    w = wm;
+    Double_t q2 = q2m;
+    Double_t w = wm;
     th_cm = TMath::ACos(csthcm) * degrad;
 //Check Kinematics
     if (q2 < 0.0) {
