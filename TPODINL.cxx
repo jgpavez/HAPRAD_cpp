@@ -50,10 +50,10 @@ double TPODINL::DoEval(double R) const
     double pp = 0.;
     double pres = 0.;
     double podinl = 0.;
-    for (int isf = 0 ; isf < 4; isf++) {
-        for (int irr = 0; irr < 2; irr++) {
+    for (int isf = 0 ; isf < 4; ++isf) {
+        for (int irr = 0; irr < 3; ++irr) {
             pp = H[isf];
-            if (irr == 1) pp = pp - fH0[isf] * TMath::Power((1 + R * fTau / fInv->Q2()), 2);
+            if (irr == 0) pp = pp - fH0[isf] * TMath::Power((1 + R * fTau / fInv->Q2()), 2);
 
             pres = pp * TMath::Power(R, (irr - 1)) / TMath::Power((fInv->Q2() + R * fTau), 2);
             podinl = podinl - fTheta[isf][irr] * pres;
