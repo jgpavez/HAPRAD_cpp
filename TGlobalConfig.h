@@ -13,9 +13,9 @@ public:
     Int_t       IntegratePhiHad(void) const { return fPhiHad; };
     Int_t       IntegratePhiRad(void) const { return fPhiRad; };
 
-    Int_t       EpsPhiR(void) const { return fEpsPhiR; };
-    Int_t       EpsTau(void) const { return fEpsTau; };
-    Int_t       EpsRR(void) const { return fEpsRR; };
+    Double_t    EpsPhiR(void) const { return fEpsPhiR; };
+    Double_t    EpsTau(void) const { return fEpsTau; };
+    Double_t    EpsRR(void) const { return fEpsRR; };
 
 
     void        SetPolarization(Int_t type) { fPolType = type; };
