@@ -78,22 +78,8 @@ double TQQTPhi::DoEval(double phi) const
     Double_t ep = TMath::Power(10, -12);
 
     for (int i = 0; i < 5; i++) {
-#ifdef DEBUG
-        std::cout.setf(std::ios::fixed);
-        std::cout << "  i: " << i << std::endl;
-        std::cout << "   lim1 "
-                  << std::setw(20) << std::setprecision(10)
-                  << TMath::Log(fKin->X() + fTauArray[i]) + ep << std::endl;
-        std::cout << "   lim2 "
-                  << std::setw(20) << std::setprecision(10)
-                  << TMath::Log(fKin->X() + fTauArray[i+1]) + ep << std::endl;
-#endif
         double re = ig.Integral(TMath::Log(fKin->X() + fTauArray[i]) + ep,
                                 TMath::Log(fKin->X() + fTauArray[i+1]) + ep);
-#ifdef DEBUG
-        std::cout << "   re   " << std::setw(20) << std::setprecision(10)
-                  << re << std::endl;
-#endif
         res = res + re;
     }
 

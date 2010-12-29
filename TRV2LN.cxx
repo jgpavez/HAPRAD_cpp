@@ -22,9 +22,6 @@ TRV2LN::TRV2LN(const TRadCor* rc, double phi_k)
     fHadKin = rc->GetHadronKinematics();
 
     fH.Evaluate(0.,0.,0.);
-#ifdef DEBUG
-    std::cout << "  RV2LN " << std::endl;
-#endif
 }
 
 
@@ -45,9 +42,6 @@ ROOT::Math::IBaseFunctionOneDim* TRV2LN::Clone() const
 
 double TRV2LN::DoEval(double tauln) const
 {
-#ifdef DEBUG
-    std::cout << "      RV2LN(" << tauln << ")" << std::endl;
-#endif
     const Double_t& M = kMassProton;
     Double_t tau, mu, factor;
 

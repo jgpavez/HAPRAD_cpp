@@ -32,9 +32,6 @@ TStructFunctionArray::TStructFunctionArray(const TRadCor* rc)
     fKin    = rc->GetKinematicalVariables();
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
-#ifdef DEBUG
-    std::cout << "  Structure Function " << std::endl;
-#endif
 }
 
 
@@ -45,9 +42,6 @@ TStructFunctionArray::TStructFunctionArray(Int_t n, const TRadCor* rc)
     fKin    = rc->GetKinematicalVariables();
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
-#ifdef DEBUG
-    std::cout << "  Structure Function " << std::endl;
-#endif
 }
 
 
