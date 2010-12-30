@@ -11,7 +11,7 @@ const Double_t kMassMuon = 0.10565;
 const Double_t kMassPion = 0.1395675;
 
 const Double_t kMassDetectedHadron   = 0.1395675;
-const Double_t kMassUndetectedHadron = 0.93956536;
+const Double_t kMassUndetectedHadron = 0.938272;
 
 const Double_t kMassC2 = TMath::Power(kMassProton + kMassDetectedHadron,2);
 
