@@ -3,12 +3,12 @@
 #include "TDelta.h"
 #include "TQQTPhi.h"
 #include "TBorn.h"
+#include "TRV2TR.h"
 #include "haprad_constants.h"
 #include "Math/GSLIntegrator.h"
+#include "Math/GSLMCIntegrator.h"
 #include <iostream>
-#ifdef DEBUG
 #include <iomanip>
-#endif
 
 
 TRadCor::TRadCor()
@@ -300,9 +300,9 @@ void TRadCor::SPhiH(void)
         tai[0] = 0.;
     }
 
-    qqt(tai[0]);
-    std::cout << "tai[" << 0
-            << "]\t"  << tai[0] << std::endl;
+    qqt(tai); // fix this
+    std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
+    std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
 
     Double_t extai1 = TMath::Exp(fDeltas.Inf());
     sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac()) +
@@ -318,85 +318,74 @@ void TRadCor::BorninTest(Double_t& sigma_born)
 
 
 
-void TRadCor::qqt(Double_t& tai)
+void TRadCor::qqt(Double_t tai[])
 {
-    /*
-    if (ita == 1) {
-    */
-
     TQQTPhi qphi(this);
     if (fConfig.IntegratePhiRad() == 1) {
         ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kNONADAPTIVE);
         ig.SetFunction(qphi);
         ig.SetRelTolerance(fConfig.EpsPhiR());
         ig.SetAbsTolerance(TMath::Power(10,-18));
-        tai = ig.Integral(0, TMath::TwoPi());
-        tai = N * kAlpha * tai / (kPi * kPi) / 4. / fInv.SqrtLq();
+        tai[0] = ig.Integral(0, TMath::TwoPi());
+        tai[0] = N * kAlpha * tai[0] / (kPi * kPi) / 4. / fInv.SqrtLq();
     } else if (fConfig.IntegratePhiRad() == 0) {
-        tai = N * kAlpha / kPi * qphi(0.) / 2 / fInv.SqrtLq();
+        tai[0] = N * kAlpha / kPi * qphi(0.) / 2 / fInv.SqrtLq();
     }
-    /*
-    } else {
-        Double_t tau_1, tau_2;
-        Double_t tau[6];
-        Double_t phi[4];
 
-        tau_1 = - Q2 / S;
-        tau_2 =   Q2 / X;
+    Double_t tau_1, tau_2;
+    Double_t tau[6];
+    Double_t phi[4];
 
-        phi[0] = 0.;
-        phi[1] = 0.01 * kPi;
-        phi[2] = 2. * kPi - 0.01 * kPi;
-        phi[3] = 2. * kPi;
+    tau_1 = - fInv.Q2() / fInv.S();
+    tau_2 =   fInv.Q2() / fInv.X();
 
-        tau[0] = tau_min;
-        tau[1] = tau_1 - 0.15 * (tau_1 - tau_min);
-        tau[2] = tau_1 + 0.15 * (tau_2 - tau_1);
-        tau[3] = tau_2 - 0.15 * (tau_2 - tau_1);
-        tau[4] = tau_2 + 0.15 * (tau_max - tau_2);
-        tau[5] = tau_max;
+    phi[0] = 0.;
+    phi[1] = 0.01 * kPi;
+    phi[2] = 2. * kPi - 0.01 * kPi;
+    phi[3] = 2. * kPi;
 
-        Int_t id = 1;
-        Double_t rere = 0.;
+    double tau_max = (fInv.Sx() + fInv.SqrtLq()) / (2. * M * M);
+    double tau_min = - fInv.Q2() / (M * M) / tau_max;
+    tau[0] = tau_min;
+    tau[1] = tau_1 - 0.15 * (tau_1 - tau_min);
+    tau[2] = tau_1 + 0.15 * (tau_2 - tau_1);
+    tau[3] = tau_2 - 0.15 * (tau_2 - tau_1);
+    tau[4] = tau_2 + 0.15 * (tau_max - tau_2);
+    tau[5] = tau_max;
 
-        for (Int_t iph = 0; iph < 3; iph++) {
-            for (Int_t ico = 0; ico < 5; ico++) {
-                Double_t am[2], bm[2];
 
-                am[0] = tau[ico];
-                bm[0] = tau[ico+1];
-                am[1] = phi[iph];
-                bm[1] = phi[iph+1];
+    ROOT::Math::GSLMCIntegrator ig(ROOT::Math::IntegrationMultiDim::kVEGAS);
+    TRV2TR rv2tr(this);
+    ig.SetFunction(rv2tr);
+    ig.SetRelTolerance(TMath::Power(10, -3));
 
-                if (am[1] > bm[1])
-                    std::cout << am[1] << " < " << bm[1] << std::endl;
-                if (am[0] > bm[0])
-                    std::cout << am[0] << " < " << bm[1] << std::endl;
+    Double_t rere = 0.;
+    for (Int_t iph = 0; iph < 3; iph++) {
+        for (Int_t ico = 0; ico < 5; ico++) {
+            Double_t am[2], bm[2];
 
-                Double_t otr;
-//                Double_t ot = TMath::Power(10, -3);
-                Int_t mir = 10000;
-//                Int_t ma = 10 * mir;
-//                Double_t wrk[500];
-                Double_t re;
-//                Double_t re2;
+            am[0] = tau[ico];
+            bm[0] = tau[ico+1];
+            am[1] = phi[iph];
+            bm[1] = phi[iph+1];
 
-                // Integration using d01fce
-//              d01fce(2, am, bm, mir, ma, rv2tr, ot, otr, 500, wrk, re, id);
-                std::cout.setf(std::ios::fixed);
-                std::cout << " tai: "
-                          << std::setw(4)  << ico + 1
-                          << std::setw(4)  << iph + 1
-                          << std::setw(10) << std::setprecision(4) << re
-                          << std::setw(10) << std::setprecision(4) << otr
-                          << std::setw(10) << std::setprecision(4) << mir
-                          << std::setw(10) << std::setprecision(4) << id
-                          << std::endl;
+            if (am[1] > bm[1])
+                std::cout << am[1] << " < " << bm[1] << std::endl;
+            if (am[0] > bm[0])
+                std::cout << am[0] << " < " << bm[1] << std::endl;
 
-                rere = rere + re;
-            }
+            Double_t re = ig.Integral(am,bm);
+
+            std::cout.setf(std::ios::fixed);
+            std::cout << " tai: "
+                        << std::setw(4)  << ico + 1
+                        << std::setw(4)  << iph + 1
+                        << std::setw(10) << std::setprecision(4) << re
+                        << std::endl;
+
+            rere = rere + re;
         }
+    }
 
-        tai = - kAlpha / (64. * TMath::Power(kPi,5.) * sqrt_lq * M) * N * rere;
-*/
+    tai[1] = - kAlpha / (64. * TMath::Power(kPi,5.) * fInv.SqrtLq() * M) * N * rere;
 }

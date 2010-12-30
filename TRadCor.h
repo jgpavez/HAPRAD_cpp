@@ -44,7 +44,7 @@ private:
     void        Haprad(void);
     void        SPhiH(void);
     void        BorninTest(Double_t& sigma_born);
-    void        qqt(Double_t& tai);
+    void        qqt(Double_t tai[]);
 
     TGlobalConfig           fConfig;
     TKinematicalVariables   fKin;
