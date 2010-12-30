@@ -1,7 +1,9 @@
 #include "THapradUtils.h"
 #include "TExclusiveModel.h"
 #include <iostream>
+#include <fstream>
 #include "TMath.h"
+
 
 void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
                     Double_t& sl, Double_t& stt, Double_t& stl, Double_t& stlp)
@@ -37,7 +39,6 @@ void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
                             };
 
     Int_t narg[3] = {nq, nw, nt};
-    Double_t nc;
     Double_t degrad = 57.29577952;
     Double_t a2 = 1.15;
     Double_t a3;
@@ -47,7 +48,6 @@ void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
     Double_t wcor;
     Double_t th_cm;
 // Init
-    nc = 0;
     st = 0.0;
     sl = 0.0;
     stt = 0.0;
@@ -86,18 +86,22 @@ void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
 
     if (TMath::Abs(csthcm) > 1) return;
 
-    Double_t rarg[nq + nw + nt];
-    const Int_t N = 100000; //solo para prueba
-    double ft_cs[N], fl_cs[N], ftt_cs[N], ftl_cs[N], ftlp_cs[N];
+    const Int_t N = 52000;
+    static Double_t ft_cs[N], fl_cs[N], ftt_cs[N], ftl_cs[N], ftlp_cs[N];
+    static Double_t rarg[nq + nw + nt];
 
+    static Int_t nc = 0;
     if (nc == 0) {
         Int_t i = 0;
-        FILE *input = fopen("pi_n_maid.dat", "r");
 
-        while (fscanf(input, "%lf   %lf   %lf   %lf   %lf\n", &ft_cs[i], &fl_cs[i], &ftt_cs[i], &ftl_cs[i], &ftlp_cs[i])) {
+        std::ifstream in;
+        in.open("pi_n_maid.dat");
+
+        while (in >> ft_cs[i] >> fl_cs[i] >>
+                     ftt_cs[i] >> ftl_cs[i] >> ftlp_cs[i]) {
             i++;
         }
-        fclose(input);
+        in.close();
 
         for (Int_t i = 0; i < nq; i++)
             rarg[i] = q2_pn[i];
@@ -113,11 +117,10 @@ void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
     }
     Double_t arg[3] = {q2, w, th_cm};
 
-    st = HapradUtils::dfint(3, arg, narg, rarg, ft_cs) * wcor * q2cor;
-    sl = HapradUtils::dfint(3, arg, narg, rarg, fl_cs) * wcor * q2cor;
-    stt = HapradUtils::dfint(3, arg, narg, rarg, ftt_cs) * wcor * q2cor;
-    stl = 2. * HapradUtils::dfint(3, arg, narg, rarg, ftl_cs) * wcor * q2cor;
+    st   = HapradUtils::dfint(3, arg, narg, rarg, ft_cs) * wcor * q2cor;
+    sl   = HapradUtils::dfint(3, arg, narg, rarg, fl_cs) * wcor * q2cor;
+    stt  = HapradUtils::dfint(3, arg, narg, rarg, ftt_cs) * wcor * q2cor;
+    stl  = 2. * HapradUtils::dfint(3, arg, narg, rarg, ftl_cs) * wcor * q2cor;
     stlp = 0;
 
-    return;
 }
