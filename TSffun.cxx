@@ -54,17 +54,17 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
 
     ExclusiveModel(Q2, SqrtW2, cspion, st, sl, stt, slt, sltp);
 
-    Double_t sfm20;
-    Double_t sfm2tl;
-    Double_t sfm4tl;
-    Double_t sfm5tl;
-    Double_t sfm4tt;
-    Double_t sfm3tt;
-    Double_t sfm2tt;
-    Double_t Coetr;
 // Structure functions
 
     if (fInv->LambdaQ() > 0 && SqrtLl > 0 && SqrtLw > 0) {
+        Double_t sfm20;
+        Double_t sfm2tl;
+        Double_t sfm4tl;
+        Double_t sfm5tl;
+        Double_t sfm4tt;
+        Double_t sfm3tt;
+        Double_t sfm2tt;
+        Double_t Coetr;
         sfm10 = st - stt;
         sfm20 = 4. * (st + sl) * Q2 / fInv->LambdaQ();
         sfm2tl = 2. * slt * Sqrt(Q2) * (-fInv->Sx() * tq + 2. * Q2 * Sx_t) / (fInv->LambdaQ() * SqrtLl);
@@ -86,14 +86,4 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
         fArray[2] = 0;
         fArray[3] = 0;
     }
-
-    if (fArray[2] != fArray[2])
-        std::cout << "sffun: "      << Coetr         << st
-                  << sl             << stt           << slt
-                  << sltp           << Q2            << fInv->LambdaQ()
-                  << fInv->Sx()     << SqrtW2        << cspion
-                  << Sx_t           << SqrtLl          << std::endl;
-
 }
-
-
