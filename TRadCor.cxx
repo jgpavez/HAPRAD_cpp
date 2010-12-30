@@ -362,19 +362,19 @@ void TRadCor::qqt(Double_t tai[])
     Double_t rere = 0.;
     for (Int_t iph = 0; iph < 3; iph++) {
         for (Int_t ico = 0; ico < 5; ico++) {
-            Double_t am[2], bm[2];
+            Double_t lower_lim[2], upper_lim[2];
 
-            am[0] = tau[ico];
-            bm[0] = tau[ico+1];
-            am[1] = phi[iph];
-            bm[1] = phi[iph+1];
+            lower_lim[0] = tau[ico];
+            upper_lim[0] = tau[ico+1];
+            lower_lim[1] = phi[iph];
+            upper_lim[1] = phi[iph+1];
 
-            if (am[1] > bm[1])
-                std::cout << am[1] << " < " << bm[1] << std::endl;
-            if (am[0] > bm[0])
-                std::cout << am[0] << " < " << bm[1] << std::endl;
+            if (lower_lim[1] > upper_lim[1])
+                std::cout << lower_lim[1] << " < " << upper_lim[1] << std::endl;
+            if (lower_lim[0] > upper_lim[0])
+                std::cout << lower_lim[0] << " < " << upper_lim[1] << std::endl;
 
-            Double_t re = ig.Integral(am,bm);
+            Double_t re = ig.Integral(lower_lim,upper_lim);
 
             std::cout.setf(std::ios::fixed);
             std::cout << " tai: "
