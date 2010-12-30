@@ -23,17 +23,24 @@ leptoproduction, based in the original FORTRAN code HAPRAD2_.
                             Eq. (19) of [Aku99]_
 ``TBorn``                   class that calculates the Born cross section
 ``TStructFunctionArray``    class for calculation of structure functions
+``TSffun``                  class for calculation of structure functions
 ``TThetaMatrix``            class for calculation of theta matrix, according
                             to Eq. (14) and Appendix B of [Aku09]_
-``TPODINL``                 ROOT based integrable class equivalent to
-                            original FORTRAN function ``podinl``
-``TRV2LN``                  ROOT based integrable class equivalent to
-                            original FORTRAN function ``rv2ln``
 ``TQQTPhi``                 ROOT based integrable class equivalent to
                             original FORTRAN function ``qqtphi``
-``THapradUtils``            several functions used for calculations, including
-                            exclusive cross section calculation and
-                            semi-inclusive structure functions calculation
+``TRV2LN``                  ROOT based integrable class equivalent to
+                            original FORTRAN function ``rv2ln``
+``TPODINL``                 ROOT based integrable class equivalent to
+                            original FORTRAN function ``podinl``
+``TRV2TR``                  ROOT based integrable class equivalent to
+                            original FORTRAN function ``rv2ln``
+``THapradUtils``            several functions used for calculations
+``TSemiInclusiveModel``     semi-inclusive structure functions calculation
+``TExclusiveModel``         exclusive cross section calculation
+``init_pdf.f``              parton distribution initialization
+``pkhff.f``                 LO and NLO fragmentation functions for charged
+                            pions, kaons and the inclusive sum of charged
+                            hadrons
 ==========================  ==================================================
 
 See the wiki_ for more information.
