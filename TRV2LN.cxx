@@ -50,7 +50,7 @@ double TRV2LN::DoEval(double tauln) const
     Double_t costk, sintk;
     costk = (fInv->Sx() - 2 * M * M * tau) / fInv->SqrtLq();
 
-    if (abs(costk) <= 1) {
+    if (TMath::Abs(costk) <= 1) {
         sintk = TMath::Sqrt(1. - costk * costk);
     } else {
         std::cout << "     rv2ln: costk > 1 " << costk << std::endl;
