@@ -79,8 +79,9 @@ double TQQTPhi::DoEval(double phi) const
     Double_t ep = 1E-12;
 
     for (int i = 0; i < 5; i++) {
-        double re = ig.Integral(TMath::Log(fKin->X() + fTauArray[i]) + ep,
-                                TMath::Log(fKin->X() + fTauArray[i+1]) + ep);
+        double low = TMath::Log(fKin->X() + fTauArray[i]) + ep;
+        double up = TMath::Log(fKin->X() + fTauArray[i+1]) + ep;
+        double re = ig.Integral(low,up);
         res = res + re;
     }
 
