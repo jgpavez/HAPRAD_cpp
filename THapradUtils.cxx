@@ -69,64 +69,71 @@ namespace HapradUtils {
 
     Double_t dfint(Int_t narg, double *arg, Int_t *nent, Double_t *ent, Double_t *table)
     {
-        Double_t kd = 0;
+        Double_t kd = 1;
         Double_t m = 1;
-        Int_t ja = 0;
+        Int_t ja = 1;
         Int_t jb, k;
+
         Int_t ncomb[narg];
         Double_t d[narg];
         Int_t ient[narg];
-        Double_t dfint;
-        Int_t i = 0;
-        while (i < narg) {
-            ncomb[i] = 1;
-            jb = ja + nent[i]; // VERIFICAR SI LOS LIMITES ESTAN CORRECTOS!!!!
+
+        Double_t result;
+
+        for (int i = 1; i <= narg; ++i) {
+            ncomb[i-1] = 1;
+            jb = ja - 1 +  nent[i-1]; // VERIFICAR SI LOS LIMITES ESTAN CORRECTOS!!!!
+
             Int_t j = ja;
             while (j <= jb) {
-                if (arg[i] <= ent[j]) goto exit_inner_loop;
+                if (arg[i-1] <= ent[j-1]) goto exit_inner_loop;
                 j++;
             }
             j = jb;
     exit_inner_loop:
             if (j == ja) ++j;
-            d[i] = (ent[j] - arg[i]) / (ent[j] - ent[j - 1]);
-            ient[i] = j - ja;
-            kd = kd + ient[i] * m;
-            m = m * nent[i];
+            d[i-1] = (ent[j-1] - arg[i-1]) / (ent[j-1] - ent[j-2]);
+            ient[i-1] = j - ja;
+            kd = kd + ient[i-1] * m;
+            m = m * nent[i-1];
             ja = jb + 1;
-            i++;
         }
 
-        dfint = 0;
+        result = 0;
+
+        Double_t fac;
+        Int_t iadr;
+        Int_t ifadr;
+        Int_t il;
+
     do_again:
-        Double_t fac = 1.;
-        Int_t iadr = kd;
-        Int_t ifadr = 1;
-        //cambiado a 0 dado el indice de los arreglos en fortran
-        i = 0;
-        while (i < narg) {
-            if (ncomb[i] == 0) {
-                fac = fac * d[i];
+        fac = 1;
+        iadr = kd;
+        ifadr = 1;
+
+        for (Int_t i = 1; i <= narg; ++i) {
+            if (ncomb[i-1] == 0) {
+                fac = fac * d[i-1];
                 iadr  = iadr - ifadr;
             } else {
-                fac = fac * (1. -  d[i]);
+                fac = fac * (1 -  d[i-1]);
             }
-            ifadr = ifadr * nent[i];
-            ++i;
+            ifadr = ifadr * nent[i-1];
         }
 
-        dfint = dfint + fac * table[iadr];
-        Int_t il = narg - 1;
-        while (ncomb[il] == 0) {
+        result = result + fac * table[iadr-1];
+
+        il = narg;
+        while (ncomb[il-1] == 0) {
             --il;
-            if (il < 0) return dfint;
+            if (il == 0) return result;
         }
 
-        ncomb[il] = 0;
+        ncomb[il-1] = 0;
         if (il == narg) goto do_again;
         k = il + 1;
-        while (k < narg) {
-            ncomb[k] = 1;
+        while (k <= narg) {
+            ncomb[k-1] = 1;
             k++;
         }
         goto do_again;
