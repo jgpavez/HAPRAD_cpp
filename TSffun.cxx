@@ -62,7 +62,7 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
 
 // Structure functions
 
-    if (fInv->LambdaQ() > 0 && SqrtLl > 0 && SqrtLw > 0) {
+    if (LambdaQ > 0 && SqrtLl > 0 && SqrtLw > 0) {
         Double_t sfm20;
         Double_t sfm2tl;
         Double_t sfm4tl;
@@ -72,12 +72,12 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
         Double_t sfm2tt;
         Double_t Coetr;
         sfm10 = st - stt;
-        sfm20 = 4. * (st + sl) * Q2 / fInv->LambdaQ();
-        sfm2tl = 2. * slt * Sqrt(Q2) * (-fInv->Sx() * tq + 2. * Q2 * Sx_t) / (fInv->LambdaQ() * SqrtLl);
+        sfm20 = 4. * (st + sl) * Q2 / LambdaQ;
+        sfm2tl = 2. * slt * Sqrt(Q2) * (-Sx * tq + 2. * Q2 * Sx_t) / (LambdaQ * SqrtLl);
         sfm4tl = -slt * Sqrt(Q2) / SqrtLl;
-        sfm4tt = -2. * stt * (-fInv->Sx() * tq + 2. * Q2 * Sx_t) / SQ(SqrtLl);
-        sfm3tt = 2. * stt * fInv->LambdaQ() / SQ(SqrtLl);
-        sfm2tt = 2. * stt * (SQ(-fInv->Sx() * tq + 2. * Q2 * Sx_t) - 2. * Q2 * SQ(SqrtLl)) / (fInv->LambdaQ() * SQ(SqrtLl));
+        sfm4tt = -2. * stt * (-Sx * tq + 2. * Q2 * Sx_t) / SQ(SqrtLl);
+        sfm3tt = 2. * stt * LambdaQ / SQ(SqrtLl);
+        sfm2tt = 2. * stt * (SQ(-Sx * tq + 2. * Q2 * Sx_t) - 2. * Q2 * SQ(SqrtLl)) / (LambdaQ * SQ(SqrtLl));
         sfm5tl = -sltp * Sqrt(Q2) / SqrtLl;
 
         Coetr = 16. * kPi * (w2 - SQ(M_p)) * w2 / (kAlpha * SqrtLw) / kBarn * 1000.;
