@@ -42,7 +42,7 @@ namespace HapradUtils {
         Int_t SPDF = 5;
         Int_t ISET = 1;
         Int_t ICHARGE = 1;
-        Int_t nc = 0;
+        static Int_t nc = 0;
         /*Check the kinematics*/
         if (X < 0 || X > 1) return;
 
