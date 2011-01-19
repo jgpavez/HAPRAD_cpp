@@ -73,7 +73,6 @@ double TRV2TR::DoEval(const double *x) const
     TSffun tldH(fRC);
     tldH.Evaluate(tldQ2,tldW2,tldT);
 
-    std::cout << tldH[0] << std::endl;
     TThetaMatrix theta(fRC);
     theta.Evaluate(tau,mu,1,phi_k);
 
