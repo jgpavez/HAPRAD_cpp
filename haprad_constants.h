@@ -1,3 +1,6 @@
+#ifndef HAPRAD_CONSTANTS
+#define HAPRAD_CONSTANTS
+
 #include "TMath.h"
 
 const Double_t kBarn = 0.389379E6;
@@ -17,3 +20,5 @@ const Double_t kMassC2 = TMath::Power(kMassProton + kMassDetectedHadron,2);
 
 const Double_t kRadianDeg = 57.2957795131;
 const Double_t kEpsMachine = 1.1E-15;
+
+#endif
