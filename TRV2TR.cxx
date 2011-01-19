@@ -85,5 +85,5 @@ double TRV2TR::DoEval(const double *x) const
             podinlz += pres;
         }
 
-    return podinlz;
+    return podinlz / fwiw;
 }
