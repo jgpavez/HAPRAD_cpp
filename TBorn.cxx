@@ -4,6 +4,7 @@
 #include "TLorentzInvariants.h"
 #include "THadronKinematics.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 
 #ifdef DEBUG
 #include <iostream>
@@ -22,8 +23,8 @@ TBorn::TBorn(const TRadCor* rc)
     const Double_t& m_h = kMassDetectedHadron;
 
     fThetaB[0] = fInv->Q2();
-    fThetaB[1] = (fInv->S() * fInv->X() - M * M * fInv->Q2()) / 2.;
-    fThetaB[2] = (fInv->V1() * fInv->V2() - m_h * m_h * fInv->Q2()) / 2.;
+    fThetaB[1] = (fInv->S() * fInv->X() - SQ(M) * fInv->Q2()) / 2.;
+    fThetaB[2] = (fInv->V1() * fInv->V2() - SQ(m_h) * fInv->Q2()) / 2.;
     fThetaB[3] = (fInv->V2() * fInv->S() + fInv->V1() * fInv->X() -
                             fKin->Z() * fInv->Q2() * fInv->Sx()) / 2.;
 }

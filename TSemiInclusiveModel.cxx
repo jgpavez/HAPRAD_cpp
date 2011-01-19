@@ -2,6 +2,7 @@
 #include "TMath.h"
 #include "Partons.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 
 /*
  *This C extern declaration is used for calling the pdf libraries
@@ -30,12 +31,12 @@ namespace HapradUtils {
     {
         using namespace TMath;
 
-        Double_t ac = 1.2025 * Power(10, -10);
-        Double_t bc = -5.2703 * Power(10, -2);
-        Double_t cc = 3.7467 * Power(10, -1);
-        Double_t dc = 6.5397 * Power(10, -2);
-        Double_t ec = -2.2136 * Power(10, -1);
-        Double_t fc = -1.0621 * Power(10, -1);
+        Double_t ac = 1.2025E-10;
+        Double_t bc = -5.2703E-2;
+        Double_t cc = 3.7467E-1;
+        Double_t dc = 6.5397E-2;
+        Double_t ec = -2.2136E-1;
+        Double_t fc = -1.0621E-1;
         Double_t GTMD, SCALE, UPV, DNV, USEA, DSEA, STR, CHM, BOT, TOP, XD, GL;
         Double_t r, xi;
         Int_t GPDF = 5;
@@ -49,7 +50,7 @@ namespace HapradUtils {
         if (Z < 0 || Z > 1) return;
 
         nc++;
-        r = Sqrt(1. + Power(2 * kMassProton * X, 2) / q2);
+        r = Sqrt(1. + SQ(2 * kMassProton * X) / q2);
         xi = 2.*X / (1 + r);
         XD = xi;
 
@@ -78,8 +79,8 @@ namespace HapradUtils {
 
         exec_pkhff_(&ISET, &ICHARGE, &ZD, &Q2D, uff, dff, sff, cff, bff, gff);
 
-        Double_t sgmpt = ac + bc * X + cc * Z + dc * Power(X, 2) +
-                                                ec * Power(Z, 2) + fc * X * Z;
+        Double_t sgmpt = ac + bc * X + cc * Z + dc * SQ(X) +
+                                                ec * SQ(Z) + fc * X * Z;
 
         if (sgmpt < 0.02) sgmpt = 0.02;
         if (sgmpt > 0.15) sgmpt = 0.15;
@@ -87,9 +88,9 @@ namespace HapradUtils {
         if (pl > 0.15)
             GTMD  = Exp(-pt2 / (2.*sgmpt)) / (2.* kPi * sgmpt);
         else
-            GTMD  = Exp(-(pt2 + 2.*Power(pl, 2)) / (2.*sgmpt)) / (2.* kPi * sgmpt);
+            GTMD  = Exp(-(pt2 + 2.*SQ(pl)) / (2.*sgmpt)) / (2.* kPi * sgmpt);
 
-        if (mx2 < Power((kMassProton + kMassPion), 2)) return;
+        if (mx2 < SQ(kMassProton + kMassPion)) return;
 
         Double_t uq, dq, sq, cq, bq, tq, gg;
         Double_t pi_thresh;
@@ -97,7 +98,7 @@ namespace HapradUtils {
         Double_t xv, zv, q2v;
         Double_t rlt = 0.14;
 
-        pi_thresh = Sqrt(1. - Power((kMassProton + kMassPion), 2) / mx2);
+        pi_thresh = Sqrt(1. - SQ(kMassProton + kMassPion) / mx2);
         uq = eu2 * ((UPV + USEA) * uff[0] + USEA * uff[1]);
         dq = ed2 * ((DNV + DSEA) * dff[0] + DSEA * dff[1]);
         sq = es2 * (STR * sff[0] + STR * sff[1]);
@@ -107,7 +108,7 @@ namespace HapradUtils {
         gg = 0.0;
         H2 = (uq + dq + sq + cq + bq + tq + gg) * GTMD * pi_thresh;
         H1 = H2 / (2. * X * (1. + rlt)) *
-                  (1. + 4. * Power(kMassProton, 2) * Power(X, 2) / q2);
+                  (1. + 4. * SQ(kMassProton) * SQ(X) / q2);
         xv = X;
         zv = Z;
         q2v = q2;
@@ -126,7 +127,7 @@ namespace HapradUtils {
         Ebeam = q2 / (2. * kMassProton * X * Y);
         rt = 1. - Y - kMassProton * X * Y / (2. * Ebeam);
         rtz = Sqrt(rt / (1. + 2. * kMassProton * X / (Y * Ebeam)));
-        cterm = X * Power(Y, 2) * H1 + rt * H2;
+        cterm = X * SQ(Y) * H1 + rt * H2;
         m_cos_phi = Sqrt(pt2 / q2) * (2. - Y) * rtz * H3m / (2.*cterm);
 
         if (Abs(4. * m_cos_phi) > 0.9) {
@@ -134,11 +135,11 @@ namespace HapradUtils {
                     (Sqrt(pt2 / q2) * (2. - Y) * rtz) / 4.;
         }
 
-        m_cos_2phi = pt2 / q2 * Power(rtz, 2) * H4m / (2.*cterm);
+        m_cos_2phi = pt2 / q2 * SQ(rtz) * H4m / (2.*cterm);
 
         if (Abs(4.*m_cos_2phi) > 0.9)
             H4m = 0.9 * Sign(1., m_cos_2phi) * (2.*cterm) /
-                    (pt2 / q2 * Power(rtz, 2)) / 4.;
+                    (pt2 / q2 * SQ(rtz)) / 4.;
 
         H1z = H1;
         H2z = H2;
@@ -157,7 +158,7 @@ Double_t h3(Double_t X, Double_t q2, Double_t Z)
     /* InitialiZed data */
     Double_t q0 = 1.;
     Double_t lambda = .25;
-    Double_t a = -3.6544 * Power(10,-4);
+    Double_t a = -3.6544E-4;
     Double_t a1 = -2.1855;
     Double_t a2 = 3.4176;
     Double_t b1 = -1.7567;
@@ -166,7 +167,7 @@ Double_t h3(Double_t X, Double_t q2, Double_t Z)
     if (q2 > q0) {
         return a * Power(X, a1) * Power((1 - X), a2) * Power(Z, b1) *
                    Power((1 - Z), b2) *
-                   Power((Log(q2 / Power(lambda, 2))) / Log(q0 / Power(lambda, 2)), bb);
+                   Power((Log(q2 / SQ(lambda))) / Log(q0 / SQ(lambda)), bb);
     } else {
         return a * Power(X, a1) * Power((1 - X), a2) *
                    Power(Z, b1) * Power((1 - Z), b2);
@@ -184,8 +185,8 @@ Double_t h4(Double_t X, Double_t q2, Double_t Z)
     Double_t q0 = 1.;
     Double_t lambda = .25;
     Double_t a = .0010908;
-    Double_t a1 = -3.5265 * Power(10,-7);
-    Double_t a2 = 3.0276 * Power(10,-8);
+    Double_t a1 = -3.5265E-7;
+    Double_t a2 = 3.0276E-8;
     Double_t b1 = -.66787;
     Double_t b2 = 3.5868;
     Double_t bb = 6.8777;
@@ -193,8 +194,8 @@ Double_t h4(Double_t X, Double_t q2, Double_t Z)
     if (q2 > q0) {
         return a * Power(X, a1) * Power((1. - X), a2) * Power(Z, b1) *
                    Power((1. - Z), b2) *
-                   Power(Log(q2 / Power(lambda, 2)) /
-                         Log(q0 / Power(lambda, 2)), (bb / X));
+                   Power(Log(q2 / SQ(lambda)) /
+                         Log(q0 / SQ(lambda)), (bb / X));
     } else {
         return a * Power(X, a1) * Power((1. - X), a2) *
                    Power(Z, b1) * Power((1. - Z), b2);

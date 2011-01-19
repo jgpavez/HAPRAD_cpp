@@ -7,6 +7,7 @@
 #include "TPODINL.h"
 #include "TThetaMatrix.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include "TMath.h"
 #include "Math/GSLIntegrator.h"
 #include <iostream>
@@ -48,7 +49,7 @@ double TRV2LN::DoEval(double tauln) const
     tau = TMath::Exp(tauln) - fInv->Q2() / fInv->Sx();
 
     Double_t costk, sintk;
-    costk = (fInv->Sx() - 2 * M * M * tau) / fInv->SqrtLq();
+    costk = (fInv->Sx() - 2 * SQ(M) * tau) / fInv->SqrtLq();
 
     if (TMath::Abs(costk) <= 1) {
         sintk = TMath::Sqrt(1. - costk * costk);
@@ -69,9 +70,9 @@ double TRV2LN::DoEval(double tauln) const
     TPODINL podinl(fRC, tau, mu, fH, theta);
     ig.SetFunction(podinl);
     ig.SetRelTolerance(fConfig->EpsRR());
-    ig.SetAbsTolerance(TMath::Power(10,-18));
+    ig.SetAbsTolerance(1E-18);
 
-    Double_t rmin = TMath::Power(10, -8);
+    Double_t rmin = 1E-8;
     Double_t rmax = (fHadKin->Px2() - kMassC2) / factor;
     double res = ig.Integral(rmin, rmax);
 

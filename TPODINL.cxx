@@ -5,6 +5,7 @@
 #include "TStructFunctionArray.h"
 #include "TThetaMatrix.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #ifdef DEBUG
 #include <iostream>
 #include <iomanip>
@@ -46,9 +47,9 @@ double TPODINL::DoEval(double R) const
     for (int isf = 0 ; isf < 4; ++isf) {
         for (int irr = 0; irr < 3; ++irr) {
             pp = H[isf];
-            if (irr == 0) pp = pp - fH0[isf] * TMath::Power((1 + R * fTau / fInv->Q2()), 2);
+            if (irr == 0) pp = pp - fH0[isf] * SQ(1 + R * fTau / fInv->Q2());
 
-            pres = pp * TMath::Power(R, (irr - 1)) / TMath::Power((fInv->Q2() + R * fTau), 2);
+            pres = pp * TMath::Power(R, (irr - 1)) / SQ(fInv->Q2() + R * fTau);
             podinl = podinl - fTheta[isf][irr] * pres;
         }
     }

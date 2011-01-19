@@ -5,6 +5,7 @@
 #include "TBorn.h"
 #include "TRV2TR.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include "Math/GSLIntegrator.h"
 #include "Math/GSLMCIntegrator.h"
 #include <iostream>
@@ -172,7 +173,7 @@ void TRadCor::Setup(void)
     // Calculate the missing mass squared
 
     Double_t S_x = - fKin.Y() / fKin.X();
-    Mx2 = M * M + S_x * (1.0 - fKin.Z()) + fKin.T();
+    Mx2 = SQ(M) + S_x * (1.0 - fKin.Z()) + fKin.T();
 }
 
 
@@ -232,7 +233,7 @@ void TRadCor::Haprad(void)
     }
 
 
-    N = kPi * TMath::Power(kAlpha,2) * fKin.Y() * fInv.Sx() * M / 2. / fInv.SqrtLq() * kBarn;
+    N = kPi * SQ(kAlpha) * fKin.Y() * fInv.Sx() * M / 2. / fInv.SqrtLq() * kBarn;
 #ifdef DEBUG
     std::cout.setf(std::ios::fixed);
     std::cout << "N      " << std::setw(20)
@@ -246,11 +247,11 @@ void TRadCor::Haprad(void)
             N = 0.;
         }
 
-        Double_t t = m_h * m_h - fInv.Q2() + 2. * (fHadKin.SqNuQ() * fHadKin.Pl() - fHadKin.Nu() * fHadKin.Eh());
+        Double_t t = SQ(m_h) - fInv.Q2() + 2. * (fHadKin.SqNuQ() * fHadKin.Pl() - fHadKin.Nu() * fHadKin.Eh());
         fKin.SetT(t);
 
         std::cout << "p_l: " << fHadKin.Pl() << "\t" << t << "\t"
-                  << fHadKin.Pl() - t + fInv.Q2() - m_h * m_h + 2. * fHadKin.Nu() * fHadKin.Eh() / 2. / fHadKin.SqNuQ()
+                  << fHadKin.Pl() - t + fInv.Q2() - SQ(m_h) + 2. * fHadKin.Nu() * fHadKin.Eh() / 2. / fHadKin.SqNuQ()
                   << std::endl;
     }
 #ifdef DEBUG
@@ -265,10 +266,10 @@ void TRadCor::Haprad(void)
     fInv.EvaluateV12();
     fHadKin.EvaluatePx2();
 
-    t_min = m_h * m_h - fInv.Q2() + 2. * (fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
+    t_min = SQ(m_h) - fInv.Q2() + 2. * (fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
 
     Double_t tdmax;
-    tdmax = m_h * m_h - fInv.Q2() + 2. * (- fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
+    tdmax = SQ(m_h) - fInv.Q2() + 2. * (- fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
 
     try {
         if ((fKin.T() - t_min) > kEpsMachine || fKin.T() < tdmax) {
@@ -325,9 +326,9 @@ void TRadCor::qqt(Double_t tai[])
         ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kNONADAPTIVE);
         ig.SetFunction(qphi);
         ig.SetRelTolerance(fConfig.EpsPhiR());
-        ig.SetAbsTolerance(TMath::Power(10,-18));
+        ig.SetAbsTolerance(1E-18);
         tai[0] = ig.Integral(0, TMath::TwoPi());
-        tai[0] = N * kAlpha * tai[0] / (kPi * kPi) / 4. / fInv.SqrtLq();
+        tai[0] = N * kAlpha * tai[0] / SQ(kPi) / 4. / fInv.SqrtLq();
     } else if (fConfig.IntegratePhiRad() == 0) {
         tai[0] = N * kAlpha / kPi * qphi(0.) / 2 / fInv.SqrtLq();
     }
@@ -344,8 +345,8 @@ void TRadCor::qqt(Double_t tai[])
     phi[2] = 2. * kPi - 0.01 * kPi;
     phi[3] = 2. * kPi;
 
-    double tau_max = (fInv.Sx() + fInv.SqrtLq()) / (2. * M * M);
-    double tau_min = - fInv.Q2() / (M * M) / tau_max;
+    double tau_max = (fInv.Sx() + fInv.SqrtLq()) / (2. * SQ(M));
+    double tau_min = - fInv.Q2() / SQ(M) / tau_max;
     tau[0] = tau_min;
     tau[1] = tau_1 - 0.15 * (tau_1 - tau_min);
     tau[2] = tau_1 + 0.15 * (tau_2 - tau_1);

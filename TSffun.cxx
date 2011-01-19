@@ -6,6 +6,7 @@
 #include "TMath.h"
 #include "TExclusiveModel.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include <iostream>
 
 
@@ -32,13 +33,13 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
     Double_t m = kMassDetectedHadron;
     Double_t M_u = kMassUndetectedHadron;
 
-    Double_t Sx = w2 + Q2 - M_p * M_p;
+    Double_t Sx = w2 + Q2 - SQ(M_p);
     Double_t SqrtW2 = Sqrt(w2);
-    Double_t LambdaQ = Sx * Sx + 4 * M_p * M_p * Q2;
-    Double_t Sx_t = Sx + t + M_p * M_p - M_u*M_u;
-    Double_t tq = t + Q2 - m * m;
+    Double_t LambdaQ = SQ(Sx) + 4 * SQ(M_p) * Q2;
+    Double_t Sx_t = Sx + t + SQ(M_p) - SQ(M_u);
+    Double_t tq = t + Q2 - SQ(m);
 
-    Double_t sffun_cmp = Power((w2 - M_u*M_u - m * m), 2) - 4 * M_u*M_u * m * m;
+    Double_t sffun_cmp = SQ(w2 - SQ(M_u) - SQ(m)) - 4 * SQ(M_u) * SQ(m);
 
     if (sffun_cmp < 0)
         std::cout << "sffun: SqrtLw=NaN " << sffun_cmp << std::endl;
@@ -46,14 +47,14 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
 
     Double_t SqrtLw = Sqrt(Max(0., sffun_cmp));
 
-    Double_t ssffun_cmp2 = Q2 * Power(Sx_t, 2) - Sx_t * Sx * tq - M_p * M_p * Power(tq, 2) - m * m * LambdaQ;
+    Double_t ssffun_cmp2 = Q2 * SQ(Sx_t) - Sx_t * Sx * tq - SQ(M_p) * SQ(tq) - SQ(m) * LambdaQ;
 
     if (ssffun_cmp2 < 0)
         std::cout << "ssffun: qll=NaN " << ssffun_cmp2 << std::endl;
     
 
     Double_t SqrtLl = Sqrt(Max(0., ssffun_cmp2));
-    Double_t cspion = (2 * tq * w2 + (Sx - 2 * Q2) * (w2 + m * m - M_u*M_u)) / SqrtLw / Sqrt(LambdaQ);
+    Double_t cspion = (2 * tq * w2 + (Sx - 2 * Q2) * (w2 + SQ(m) - SQ(M_u))) / SqrtLw / Sqrt(LambdaQ);
 
 //  Exclusive peak model (cross sections sigma_L,T,LT... from MAID2003)
 
@@ -74,12 +75,12 @@ void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
         sfm20 = 4. * (st + sl) * Q2 / fInv->LambdaQ();
         sfm2tl = 2. * slt * Sqrt(Q2) * (-fInv->Sx() * tq + 2. * Q2 * Sx_t) / (fInv->LambdaQ() * SqrtLl);
         sfm4tl = -slt * Sqrt(Q2) / SqrtLl;
-        sfm4tt = -2. * stt * (-fInv->Sx() * tq + 2. * Q2 * Sx_t) / Power(SqrtLl, 2.);
-        sfm3tt = 2. * stt * fInv->LambdaQ() / Power(SqrtLl, 2.);
-        sfm2tt = 2. * stt * (Power((-fInv->Sx() * tq + 2. * Q2 * Sx_t), 2.) - 2. * Q2 * Power(SqrtLl, 2.)) / (fInv->LambdaQ() * Power(SqrtLl, 2.));
+        sfm4tt = -2. * stt * (-fInv->Sx() * tq + 2. * Q2 * Sx_t) / SQ(SqrtLl);
+        sfm3tt = 2. * stt * fInv->LambdaQ() / SQ(SqrtLl);
+        sfm2tt = 2. * stt * (SQ(-fInv->Sx() * tq + 2. * Q2 * Sx_t) - 2. * Q2 * SQ(SqrtLl)) / (fInv->LambdaQ() * SQ(SqrtLl));
         sfm5tl = -sltp * Sqrt(Q2) / SqrtLl;
 
-        Coetr = 16. * kPi * (w2 - M_p * M_p) * w2 / (kAlpha * SqrtLw) / kBarn * 1000.;
+        Coetr = 16. * kPi * (w2 - SQ(M_p)) * w2 / (kAlpha * SqrtLw) / kBarn * 1000.;
         fArray[0] = Coetr * sfm10;
         fArray[1] = Coetr * (sfm20 + sfm2tl + sfm2tt);
         fArray[2] = Coetr * sfm3tt;

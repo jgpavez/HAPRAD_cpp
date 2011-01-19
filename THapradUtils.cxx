@@ -1,5 +1,6 @@
 #include "THapradUtils.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include "Partons.h"
 #include <iostream>
 #include <string>
@@ -19,7 +20,7 @@ namespace HapradUtils {
 
         if (x < -1) {
             Double_t logprod;
-            logprod = TMath::Log(1 - x) * TMath::Log(x * x / (1 - x));
+            logprod = TMath::Log(1 - x) * TMath::Log(SQ(x) / (1 - x));
             result = - 0.5 * logprod - f1 + fspens(1 / (1 - x));
         } else if (x < 0) {
             Double_t log2;
@@ -29,7 +30,7 @@ namespace HapradUtils {
             result = fspens(x);
         } else if (x <= 1) {
             Double_t logprod;
-            logprod = TMath::Log(x) * TMath::Log(1 - x + TMath::Power(10, -10));
+            logprod = TMath::Log(x) * TMath::Log(1 - x + 1E-10);
             result = f1 - logprod - fspens(1 - x);
         } else if (x <= 2) {
             Double_t logprod;
@@ -51,13 +52,13 @@ namespace HapradUtils {
         Double_t f   = 0;
         Double_t a   = 1;
         Double_t an  = 0;
-        Double_t tch = TMath::Power(10, -16);
+        Double_t tch = 1E-16;
         Double_t b;
 
         do {
             an = an + 1;
             a = a * x;
-            b = a / TMath::Power(an, 2);
+            b = a / SQ(an);
             f = f + b;
         } while (b - tch > 0);
 

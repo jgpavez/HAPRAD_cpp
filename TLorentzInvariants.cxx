@@ -5,6 +5,7 @@
 #include "THadronKinematics.h"
 #include "THapradException.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include <iostream>
 #ifdef DEBUG
 #include <iomanip>
@@ -67,8 +68,8 @@ void TLorentzInvariants::Evaluate(void)
               << fQ2 << std::endl;
 #endif
 
-    Double_t y_max = 1. / (1. + M * M * fKin->X() / fS);
-    Double_t y_min = (kMassC2 - M * M) / (fS * (1. - fKin->X()));
+    Double_t y_max = 1. / (1. + SQ(M) * fKin->X() / fS);
+    Double_t y_min = (kMassC2 - SQ(M)) / (fS * (1. - fKin->X()));
 
     if (y > y_max || y < y_min || fKin->X() > 1. || fKin->X() < 0.)
         throw TKinematicException();
@@ -76,12 +77,12 @@ void TLorentzInvariants::Evaluate(void)
     fX  = fS * (1. - y);
     fSx = fS - fX;
     fSp = fS + fX;
-    fW2 = fS - fX - fQ2 + M * M;
+    fW2 = fS - fX - fQ2 + SQ(M);
 
-    fLambdaS = fS * fS - 4. * m * m * M * M;
-    fLambdaX = fX * fX - 4. * m * m * M * M;
-    fLambdaM = fQ2 * fQ2 + 4. * m * m * fQ2;
-    fLambdaQ = Power(fSx, 2) + 4. * M * M * fQ2;
+    fLambdaS = SQ(fS) - 4. * SQ(m) * SQ(M);
+    fLambdaX = SQ(fX) - 4. * SQ(m) * SQ(M);
+    fLambdaM = SQ(fQ2) + 4. * SQ(m) * fQ2;
+    fLambdaQ = SQ(fSx) + 4. * SQ(M) * fQ2;
 
 #ifdef DEBUG
     std::cout.setf(std::ios::fixed);
@@ -136,10 +137,10 @@ void TLorentzInvariants::EvaluateV12(void)
     Double_t costs, costx, sints, sintx;
     Double_t lambda;
 
-    costs = (fS * (fS - fX) + 2. * M * M * fQ2) / fSqrtLs / fSqrtLq;
-    costx = (fX * (fS - fX) - 2. * M * M * fQ2) / fSqrtLx / fSqrtLq;
+    costs = (fS * (fS - fX) + 2. * SQ(M) * fQ2) / fSqrtLs / fSqrtLq;
+    costx = (fX * (fS - fX) - 2. * SQ(M) * fQ2) / fSqrtLx / fSqrtLq;
 
-    lambda = fS * fX * fQ2 - M * M * fQ2 * fQ2 - m * m * fLambdaQ;
+    lambda = fS * fX * fQ2 - SQ(M) * SQ(fQ2) - SQ(m) * fLambdaQ;
 
     if (lambda > 0) {
         sints = 2. * M * Sqrt(lambda) / fSqrtLs / fSqrtLq;

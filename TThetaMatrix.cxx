@@ -6,6 +6,7 @@
 #include "THadronKinematics.h"
 #include "THapradUtils.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 
 #include <iostream>
 
@@ -44,8 +45,8 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     using namespace TMath;
 
     const Double_t M   = kMassProton;
-    const Double_t M2  = kMassProton * kMassProton;
-    const Double_t mh2 = kMassDetectedHadron * kMassDetectedHadron;
+    const Double_t M2  = SQ(kMassProton);
+    const Double_t mh2 = SQ(kMassDetectedHadron);
 
     Double_t m;
     switch(fConfig->PolarizationType()) {
@@ -58,7 +59,7 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
         default:
             m = kMassElectron;
     }
-    Double_t m2 = m * m;
+    Double_t m2 = SQ(m);
 
     Double_t bb;
     Double_t sqrtmb;
@@ -80,7 +81,7 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     const Double_t& Lq = fInv->LambdaQ();
     const Double_t& sqrtLq = fInv->SqrtLq();
 
-    Double_t tau2 = tau * tau;
+    Double_t tau2 = SQ(tau);
 
     if (fConfig->IntegratePhiRad() == 0 && ita == 1) {
         Double_t b1;
@@ -91,8 +92,8 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
         b1 = (- Lq * tau - Sp * Sx * tau - 2. * Sp * Q2) / 2.;
         b2 = (- Lq * tau + Sp * Sx * tau + 2. * Sp * Q2) / 2.;
 
-        c1 = Power((S * tau + Q2), 2) - (4. * (M2 * tau2 - Sx * tau - Q2) * m2);
-        c2 = - (4. * (M2 * tau2 - Sx * tau - Q2) * m2 - Power((X * tau - Q2), 2));
+        c1 = SQ(S * tau + Q2) - (4. * (M2 * tau2 - Sx * tau - Q2) * m2);
+        c2 = - (4. * (M2 * tau2 - Sx * tau - Q2) * m2 - SQ(X * tau - Q2));
 
         bb = 1;
         if (c1 < 0) {
@@ -111,13 +112,13 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
         bis  =   sqrtLq * (-b1 / sc1 / c1 + b2 / sc2 / c2) * m2;
         bir  =   sqrtLq * (b2 / sc2 / c2 + b1 / sc1 / c1) * m2;
         b1i  = - sqrtLq * b1 / Lq / sqrtLq;
-        b11i =   sqrtLq * (3. * b1 * b1 - Lq * c1) / 2. / (Lq * Lq) / sqrtLq;
+        b11i =   sqrtLq * (3. * SQ(b1) - Lq * c1) / 2. / SQ(Lq) / sqrtLq;
     } else {
-        Double_t tau_max = (Sx + sqrtLq) / (2. * M * M);
-        Double_t tau_min = - Q2 / (M * M) / tau_max;
+        Double_t tau_max = (Sx + sqrtLq) / (2. * SQ(M));
+        Double_t tau_min = - Q2 / SQ(M) / tau_max;
         Double_t Lt = (tau - tau_min) * (tau_max - tau);
 
-        const Double_t Q4 = Q2 * Q2;
+        const Double_t Q4 = SQ(Q2);
 
         Double_t sqrtmb_comp =  Lt * (S * X * Q2 - Q4 * M2 - m2 * Lq);
 
@@ -135,10 +136,10 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
         bb     = 1. / sqrtLq / kPi;
         bi12   = bb / (z1 * z2);
         bi1pi2 = bb / z2 + bb / z1;
-        bis    = (bb / Power(z2, 2) + bb / Power(z1, 2)) * m2;
-        bir    = (bb / Power(z2, 2) - bb / Power(z1, 2)) * m2;
+        bis    = (bb / SQ(z2) + bb / SQ(z1)) * m2;
+        bir    = (bb / SQ(z2) - bb / SQ(z1)) * m2;
         b1i    = bb * z1;
-        b11i   = bb * Power(z1, 2);
+        b11i   = bb * SQ(z1);
     }
 
     const Double_t& zh = fKin->Z();
@@ -154,14 +155,14 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     (*this)[0][2] = -2. * (bi12 * tau2 + 2. * bb);
 
     (*this)[1][0] = 2. * hi2 * (S * X - M2 * Q2);
-    (*this)[1][1] = 0.5 * (bi1pi2 * Sx * Sp - bi12 * tau * Sp * Sp +
+    (*this)[1][1] = 0.5 * (bi1pi2 * Sx * Sp - bi12 * tau * SQ(Sp) +
                             2. * bir * Sp + 2. * hi2 * (Sx - 2. * M2 * tau));
     (*this)[1][2] = 0.5 * (bi12 * tau * (2. * M2 * tau - Sx) -
                                             bi1pi2 * Sp + 4. * M2 * bb);
 
     (*this)[2][0] =   2. * hi2 * (V1 * V2 - mh2 * Q2);
     (*this)[2][1] = - 2. * ((mh2 * tau - mu * vvm) * hi2 - bir * mu * vvp -
-                            bi1pi2 * vvm * vvp + bi12 * tau * vvp * vvp);
+                            bi1pi2 * vvm * vvp + bi12 * tau * SQ(vvp));
     (*this)[2][2] = bi12 * tau * (mh2 * tau - mu * vvm) -
                     bi1pi2 * mu * vvp + 2. * mh2 * bb;
 

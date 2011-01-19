@@ -5,6 +5,7 @@
 #include "TLorentzInvariants.h"
 #include "TRV2LN.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include "Math/GSLIntegrator.h"
 #ifdef DEBUG
 #include <iostream>
@@ -19,8 +20,8 @@ TQQTPhi::TQQTPhi(const TRadCor* rc)
     fInv = rc->GetLorentzInvariants();
     fKin = rc->GetKinematicalVariables();
 
-    fTauMax = (fInv->Sx() + fInv->SqrtLq()) / (2. * kMassProton * kMassProton);
-    fTauMin = - fInv->Q2() / (kMassProton * kMassProton) / fTauMax;
+    fTauMax = (fInv->Sx() + fInv->SqrtLq()) / (2. * SQ(kMassProton));
+    fTauMin = - fInv->Q2() / SQ(kMassProton) / fTauMax;
 #ifdef DEBUG
     std::cout.setf(std::ios::fixed);
     std::cout << "  tau_max  " << std::setw(20) << std::setprecision(10)
@@ -72,10 +73,10 @@ double TQQTPhi::DoEval(double phi) const
     TRV2LN rv2ln(fRC, phi);
     ig.SetFunction(rv2ln);
     ig.SetRelTolerance(fConfig->EpsTau());
-    ig.SetAbsTolerance(TMath::Power(10,-18));
+    ig.SetAbsTolerance(1E-18);
 
     double res = 0;
-    Double_t ep = TMath::Power(10, -12);
+    Double_t ep = 1E-12;
 
     for (int i = 0; i < 5; i++) {
         double re = ig.Integral(TMath::Log(fKin->X() + fTauArray[i]) + ep,

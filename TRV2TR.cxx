@@ -7,6 +7,7 @@
 #include "TSffun.h"
 #include "TThetaMatrix.h"
 #include "haprad_constants.h"
+#include "square_power.h"
 #include "TMath.h"
 #include <iostream>
 
@@ -20,12 +21,12 @@ TRV2TR::TRV2TR(const TRadCor* rc)
     fHadKin = rc->GetHadronKinematics();
 
     M   = kMassProton;
-    M2  = kMassProton * kMassProton;
-    mh2 = kMassDetectedHadron * kMassDetectedHadron;
-    mu2 = kMassUndetectedHadron * kMassUndetectedHadron;
+    M2  = SQ(kMassProton);
+    mh2 = SQ(kMassDetectedHadron);
+    mu2 = SQ(kMassUndetectedHadron);
 
-    tau_max = (fInv->Sx() + fInv->SqrtLq()) / (2. * M * M);
-    tau_min = - fInv->Q2() / (M * M) / tau_max;
+    tau_max = (fInv->Sx() + fInv->SqrtLq()) / (2. * SQ(M));
+    tau_min = - fInv->Q2() / SQ(M) / tau_max;
 }
 
 
