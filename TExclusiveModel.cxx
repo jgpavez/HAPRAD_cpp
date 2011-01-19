@@ -8,10 +8,6 @@
 void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
                     Double_t& sl, Double_t& stt, Double_t& stl, Double_t& stlp)
 {
-    const Int_t nq = 18;
-    const Int_t nw = 47;
-    const Int_t nt = 61;
-
     Double_t q2_pn[nq] = {0.0, 0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1,
                           2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.2, 4.5,
                           4.8, 5.0
@@ -86,21 +82,28 @@ void ExclusiveModel(Double_t q2m, Double_t wm, Double_t csthcm, Double_t &st,
 
     if (TMath::Abs(csthcm) > 1) return;
 
-    const Int_t N = 52000;
-    static Double_t ft_cs[N], fl_cs[N], ftt_cs[N], ftl_cs[N], ftlp_cs[N];
+    static Double_t ft_cs[nt * nw * nq];
+    static Double_t fl_cs[nt * nw * nq];
+    static Double_t ftt_cs[nt * nw * nq];
+    static Double_t ftl_cs[nt * nw * nq];
+    static Double_t ftlp_cs[nt * nw * nq];
+
     static Double_t rarg[nq + nw + nt];
 
     static Int_t nc = 0;
     if (nc == 0) {
-        Int_t i = 0;
-
         std::ifstream in;
         in.open("pi_n_maid.dat");
 
-        while (in >> ft_cs[i] >> fl_cs[i] >>
-                     ftt_cs[i] >> ftl_cs[i] >> ftlp_cs[i]) {
-            i++;
-        }
+        for (Int_t k = 0; k < nq; k++)
+                for (Int_t j = 0; j < nw; j++)
+                        for (Int_t i = 0; i < nt; i++) {
+                                in >> ft_cs  [nq * nw * i + nq * j + k]
+                                   >> fl_cs  [nq * nw * i + nq * j + k]
+                                   >> ftt_cs [nq * nw * i + nq * j + k]
+                                   >> ftl_cs [nq * nw * i + nq * j + k]
+                                   >> ftlp_cs[nq * nw * i + nq * j + k];
+                        }
         in.close();
 
         for (Int_t i = 0; i < nq; i++)
