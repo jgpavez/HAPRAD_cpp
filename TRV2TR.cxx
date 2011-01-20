@@ -60,7 +60,7 @@ double TRV2TR::DoEval(const double *x) const
     double vv = (1 - fKin->Z()) * fInv->Sx() + fKin->T() + M2 - mu2;
     double mu = (fHadKin->Eh() -
                  fHadKin->Pl() * (fInv->Sx() - tau * 2 * M2) / fInv->SqrtLq() -
-                 2 * M2 * fHadKin->Ph() *
+                 2 * M2 * fHadKin->Pt() *
                         TMath::Sqrt((tau - tau_min) * (tau_max - tau)) *
                         TMath::Cos(fKin->PhiH() - phi_k) / fInv->SqrtLq()) / M;
 
@@ -74,7 +74,7 @@ double TRV2TR::DoEval(const double *x) const
     tldH.Evaluate(tldQ2,tldW2,tldT);
 
     TThetaMatrix theta(fRC);
-    theta.Evaluate(tau,mu,1,phi_k);
+    theta.Evaluate(tau,mu,2,phi_k);
 
     double podinlz = 0.;
     for (int i = 0; i < 4; ++i)
