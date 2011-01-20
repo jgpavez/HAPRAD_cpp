@@ -183,12 +183,27 @@ Double_t TRadCor::GetRCFactor(void)
     // Get the radiative correction factor. You must set the parameters before
     // using this method.
 
+    Double_t tail;
+
     if (Mx2 > maxMx2) {
         Haprad();
         rc = sig_obs / sigma_born;
+        sig_obs *= 1E-3;
+        sigma_born *= 1E-3;
+        tail = tai[1] * 1E-3;
+
+        std::cout << std::endl;
+        std::cout.setf(std::ios::fixed);
+        std::cout << "    sib    " << std::setw(10)
+                                   << std::setprecision(7) << sigma_born
+                  << "    sig    " << std::setw(10)
+                                   << std::setprecision(7) << sig_obs
+                  << "    tail   " << std::setw(10)
+                                   << std::setprecision(7) << tail << std::endl;
     } else {
         rc = 0;
     }
+
     return rc;
 }
 
@@ -302,8 +317,6 @@ void TRadCor::SPhiH(void)
     }
 
     qqt(tai); // fix this
-    std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
-    std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
 
     Double_t extai1 = TMath::Exp(fDeltas.Inf());
     sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac()) +
@@ -333,6 +346,8 @@ void TRadCor::qqt(Double_t tai[])
         tai[0] = N * kAlpha / kPi * qphi(0.) / 2 / fInv.SqrtLq();
     }
 
+    std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
+
     Double_t tau_1, tau_2;
     Double_t tau[6];
     Double_t phi[4];
@@ -354,6 +369,7 @@ void TRadCor::qqt(Double_t tai[])
     tau[4] = tau_2 + 0.15 * (tau_max - tau_2);
     tau[5] = tau_max;
 
+    std::cout << "********** ita: " << 2 << " *********" << std::endl;
 
     ROOT::Math::GSLMCIntegrator ig(ROOT::Math::IntegrationMultiDim::kMISER,
                                    1E-6,
@@ -381,9 +397,9 @@ void TRadCor::qqt(Double_t tai[])
 
             std::cout.setf(std::ios::fixed);
             std::cout << " tai: "
-                        << std::setw(4)  << ico + 1
-                        << std::setw(4)  << iph + 1
-                        << std::setw(10) << std::setprecision(4) << re
+                        << std::setw(4)  << ico + 1 << "  "
+                        << std::setw(4)  << iph + 1 << "  "
+                        << std::setw(10) << std::setprecision(4) << re << "  "
                         << std::endl;
 
             rere = rere + re;
@@ -391,4 +407,5 @@ void TRadCor::qqt(Double_t tai[])
     }
 
     tai[1] = - kAlpha / (64. * TMath::Power(kPi,5.) * fInv.SqrtLq() * M) * N * rere;
+    std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
 }
