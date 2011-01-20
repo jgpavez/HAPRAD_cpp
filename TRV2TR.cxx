@@ -78,12 +78,11 @@ double TRV2TR::DoEval(const double *x) const
     theta.Evaluate(tau,mu,2,phi_k);
 
     double podinlz = 0.;
-    for (int i = 0; i < 4; ++i)
-        for (int j = 0; j < 3; ++j) {
-            double pres = tldH(i) * theta(i,j) /
-                                TMath::Power(tldQ2,2) * TMath::Power(R,j-1);
-            podinlz += pres;
-        }
+    for (int i = 0; i < 4; ++i) {
+        double factor = tldH(i) / tldQ4;
+        double pres = theta(i,0) / R + theta(i,1) + theta(i,2) * R;
+        podinlz += pres * factor;
+    }
 
     return podinlz / fwiw;
 }
