@@ -355,7 +355,7 @@ void TRadCor::qqt(Double_t tai[])
     tau[5] = tau_max;
 
 
-    ROOT::Math::GSLMCIntegrator ig(ROOT::Math::IntegrationMultiDim::kVEGAS);
+    ROOT::Math::GSLMCIntegrator ig(ROOT::Math::IntegrationMultiDim::kMISER);
     TRV2TR rv2tr(this);
     ig.SetFunction(rv2tr);
     ig.SetRelTolerance(TMath::Power(10, -3));
