@@ -133,7 +133,7 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
                                 2 * M * Cos(phi_k) * sqrtmb) / Lq;
         z2 = (Q2 * Sp + tau * (X * Sx - 2 * M2 * Q2) -
                                 2 * M * Cos(phi_k) * sqrtmb) / Lq;
-        bb     = 1. / sqrtLq / kPi;
+        bb     = 1;
         bi12   = bb / (z1 * z2);
         bi1pi2 = bb / z2 + bb / z1;
         bis    = (bb / SQ(z2) + bb / SQ(z1)) * m2;
