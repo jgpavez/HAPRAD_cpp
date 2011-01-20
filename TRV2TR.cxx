@@ -67,6 +67,7 @@ double TRV2TR::DoEval(const double *x) const
     double fwiw  = 1. + tau - mu;
     double R     = vv / fwiw;
     double tldQ2 = fInv->Q2() + R * tau;
+    double tldQ4 = SQ(tldQ2);
     double tldW2 = fInv->W2() - R * (1. + tau);
     double tldT  = fKin->T() - R * (tau - mu);
 
@@ -79,7 +80,7 @@ double TRV2TR::DoEval(const double *x) const
     double podinlz = 0.;
     for (int i = 0; i < 4; ++i)
         for (int j = 0; j < 3; ++j) {
-            double pres = tldH[i] * theta[i][j] /
+            double pres = tldH(i) * theta(i,j) /
                                 TMath::Power(tldQ2,2) * TMath::Power(R,j-1);
             podinlz += pres;
         }

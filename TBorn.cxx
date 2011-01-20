@@ -37,7 +37,7 @@ Double_t TBorn::GetValue(Double_t N)
 
     Double_t sum = 0.;
     for (Int_t i = 0; i < 4; ++i) {
-        sum = sum + fThetaB[i] * fH[i];
+        sum = sum + fThetaB[i] * fH(i);
     }
 
     return sum * N / fInv->Q2() / fInv->Q2() * 2.;

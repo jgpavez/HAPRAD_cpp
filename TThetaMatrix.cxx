@@ -11,30 +11,34 @@
 #include <iostream>
 
 TThetaMatrix::TThetaMatrix(const TRadCor* rc)
-  : TMatrixD(4,3)
+  : fRows(4), fCols(3)
 {
     fConfig = rc->GetConfig();
     fKin    = rc->GetKinematicalVariables();
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
+
+    fData = new Double_t[fRows * fCols];
 }
 
 
 
 TThetaMatrix::TThetaMatrix(Int_t rows, Int_t cols, const TRadCor* rc)
-  : TMatrixD(rows,cols)
+  : fRows(rows), fCols(cols)
 {
     fConfig = rc->GetConfig();
     fKin    = rc->GetKinematicalVariables();
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
+
+    fData = new Double_t[fRows * fCols];
 }
 
 
 
 TThetaMatrix::~TThetaMatrix()
 {
-
+    delete[] fData;
 }
 
 
@@ -150,27 +154,27 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     Double_t vvp = (V1 + V2) / 2.;
     Double_t vvm = (V1 - V2) / 2.;
 
-    (*this)[0][0] = 4. * Q2 * hi2;
-    (*this)[0][1] = 4. * tau * hi2;
-    (*this)[0][2] = -2. * (bi12 * tau2 + 2. * bb);
+    (*this)(0,0) = 4. * Q2 * hi2;
+    (*this)(0,1) = 4. * tau * hi2;
+    (*this)(0,2) = -2. * (bi12 * tau2 + 2. * bb);
 
-    (*this)[1][0] = 2. * hi2 * (S * X - M2 * Q2);
-    (*this)[1][1] = 0.5 * (bi1pi2 * Sx * Sp - bi12 * tau * SQ(Sp) +
-                            2. * bir * Sp + 2. * hi2 * (Sx - 2. * M2 * tau));
-    (*this)[1][2] = 0.5 * (bi12 * tau * (2. * M2 * tau - Sx) -
-                                            bi1pi2 * Sp + 4. * M2 * bb);
+    (*this)(1,0) = 2. * hi2 * (S * X - M2 * Q2);
+    (*this)(1,1) = 0.5 * (bi1pi2 * Sx * Sp - bi12 * tau * SQ(Sp) +
+                           2. * bir * Sp + 2. * hi2 * (Sx - 2. * M2 * tau));
+    (*this)(1,2) = 0.5 * (bi12 * tau * (2. * M2 * tau - Sx) -
+                                           bi1pi2 * Sp + 4. * M2 * bb);
 
-    (*this)[2][0] =   2. * hi2 * (V1 * V2 - mh2 * Q2);
-    (*this)[2][1] = - 2. * ((mh2 * tau - mu * vvm) * hi2 - bir * mu * vvp -
-                            bi1pi2 * vvm * vvp + bi12 * tau * SQ(vvp));
-    (*this)[2][2] = bi12 * tau * (mh2 * tau - mu * vvm) -
-                    bi1pi2 * mu * vvp + 2. * mh2 * bb;
+    (*this)(2,0) =   2. * hi2 * (V1 * V2 - mh2 * Q2);
+    (*this)(2,1) = - 2. * ((mh2 * tau - mu * vvm) * hi2 - bir * mu * vvp -
+                           bi1pi2 * vvm * vvp + bi12 * tau * SQ(vvp));
+    (*this)(2,2) = bi12 * tau * (mh2 * tau - mu * vvm) -
+                   bi1pi2 * mu * vvp + 2. * mh2 * bb;
 
-    (*this)[3][0] = - 2. * (V1 * Sx - 2. * S * vvp + Q2 * Sx * zh) * hi2;
-    (*this)[3][1] = - 2. * bi12 * tau * vvp * Sp +
-                    bi1pi2 * (Sp * vvm + Sx * vvp) +
-                    bir * (mu * Sp + 2. * vvp) +
-                    hi2 * (Sx * (mu - 2. * tau * zh) + 2. * vvm);
-    (*this)[3][2] = bi12 * tau * (Sx * (tau * zh - mu / 2.) - vvm) -
+    (*this)(3,0) = - 2. * (V1 * Sx - 2. * S * vvp + Q2 * Sx * zh) * hi2;
+    (*this)(3,1) = - 2. * bi12 * tau * vvp * Sp +
+                   bi1pi2 * (Sp * vvm + Sx * vvp) +
+                   bir * (mu * Sp + 2. * vvp) +
+                   hi2 * (Sx * (mu - 2. * tau * zh) + 2. * vvm);
+    (*this)(3,2) = bi12 * tau * (Sx * (tau * zh - mu / 2.) - vvm) -
                     bi1pi2 * (Sp * mu / 2. + vvp) + 2. * Sx * zh * bb;
 }

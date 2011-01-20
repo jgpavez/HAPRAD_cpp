@@ -51,11 +51,11 @@ double TPODINL::DoEval(double R) const
 
     for (int isf = 0 ; isf < 4; ++isf) {
         for (int irr = 0; irr < 3; ++irr) {
-            pp = H[isf];
-            if (irr == 0) pp = pp - fH0[isf] * factor1;
+            pp = H(isf);
+            if (irr == 0) pp = pp - fH0(isf) * factor1;
 
             pres = pp * TMath::Power(R, (irr - 1)) / factor2;
-            podinl = podinl - fTheta[isf][irr] * pres;
+            podinl = podinl - fTheta(isf,irr) * pres;
         }
     }
     return podinl;
