@@ -1,7 +1,7 @@
 #ifndef TTHETAMATRIX_H
 #define TTHETAMATRIX_H
 
-#include "TMatrixD.h"
+#include "TROOT.h"
 
 class TRadCor;
 class TGlobalConfig;
@@ -32,7 +32,7 @@ private:
 
     Int_t       fRows;
     Int_t       fCols;
-    Double_t*   fData;
+    Double_t   fData[12];
 };
 
 #endif

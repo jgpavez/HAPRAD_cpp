@@ -23,7 +23,7 @@ private:
     const TLorentzInvariants*       fInv;
     const THadronKinematics*        fHadKin;
 
-    Double_t*   fArray;
+    Double_t    fArray[4];
 };
 
 

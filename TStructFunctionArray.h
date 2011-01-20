@@ -13,7 +13,6 @@ class THadronKinematics;
 class TStructFunctionArray {
 public:
     TStructFunctionArray(const TRadCor* rc);
-    TStructFunctionArray(Int_t n, const TRadCor* rc);
     ~TStructFunctionArray();
 
     void        Evaluate(Double_t tau, Double_t mu, Double_t R);
@@ -26,7 +25,7 @@ private:
     const TLorentzInvariants*       fInv;
     const THadronKinematics*        fHadKin;
 
-    Double_t*   fArray;
+    Double_t    fArray[4];
 };
 
 #endif

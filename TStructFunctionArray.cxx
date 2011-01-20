@@ -32,19 +32,6 @@ TStructFunctionArray::TStructFunctionArray(const TRadCor* rc)
     fKin    = rc->GetKinematicalVariables();
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
-
-    fArray = new Double_t[4];
-}
-
-
-
-TStructFunctionArray::TStructFunctionArray(Int_t n, const TRadCor* rc)
-{
-    fKin    = rc->GetKinematicalVariables();
-    fInv    = rc->GetLorentzInvariants();
-    fHadKin = rc->GetHadronKinematics();
-
-    fArray = new Double_t[n];
 }
 
 
@@ -52,7 +39,6 @@ TStructFunctionArray::TStructFunctionArray(Int_t n, const TRadCor* rc)
 TStructFunctionArray::~TStructFunctionArray()
 {
     // Do nothing
-    delete[] fArray;
 }
 
 

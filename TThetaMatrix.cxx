@@ -18,7 +18,7 @@ TThetaMatrix::TThetaMatrix(const TRadCor* rc)
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
 
-    fData = new Double_t[fRows * fCols];
+//    fData = new Double_t[fRows * fCols];
 }
 
 
@@ -31,14 +31,14 @@ TThetaMatrix::TThetaMatrix(Int_t rows, Int_t cols, const TRadCor* rc)
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
 
-    fData = new Double_t[fRows * fCols];
+//    fData = new Double_t[fRows * fCols];
 }
 
 
 
 TThetaMatrix::~TThetaMatrix()
 {
-    delete[] fData;
+//    delete[] fData;
 }
 
 

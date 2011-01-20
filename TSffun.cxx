@@ -15,14 +15,11 @@ TSffun::TSffun(const TRadCor* rc)
     fKin    = rc->GetKinematicalVariables();
     fInv    = rc->GetLorentzInvariants();
     fHadKin = rc->GetHadronKinematics();
-
-    fArray = new Double_t[4];
 }
 
 TSffun::~TSffun()
 {
     // Do Nothing, default destructor
-    delete[] fArray;
 }
 
 void TSffun::Evaluate(Double_t Q2, Double_t w2, Double_t t)
