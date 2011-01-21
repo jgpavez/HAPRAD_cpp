@@ -181,7 +181,11 @@ void TRadCor::Setup(void)
 void TRadCor::CalculateRCFactor(void)
 {
     if (Mx2 > maxMx2)
-        Haprad();
+        try {
+            Haprad();
+        } catch (TKinematicException& wrongKin) {
+            std::cout << wrongKin.what() << std::endl;
+        }
 }
 
 
@@ -231,7 +235,12 @@ Double_t TRadCor::GetRCFactor(void)
     Double_t tail;
 
     if (Mx2 > maxMx2) {
-        Haprad();
+        try {
+            Haprad();
+        } catch (TKinematicException& wrongKin) {
+            std::cout << wrongKin.what() << std::endl;
+            return 0;
+        }
 
         sig_obs += tai[0] + tai[1];
         rc = sig_obs / sigma_born;
@@ -274,62 +283,65 @@ Double_t TRadCor::GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
 
 void TRadCor::Haprad(void)
 {
-    pl = 0.;
+    fInv.SetS();
+    fInv.SetQ2();
 
-    try {
-        fInv.Evaluate();
-        if (fKin.Y() < 0.) {
-            Double_t y = fInv.Q2() / (fInv.S() * fKin.X());
-            fKin.SetY(y);
-        }
-    } catch (TKinematicException& wrongKin) {
-        std::cout << wrongKin.what() << std::endl;
-        return;
+    if (fKin.Y() < 0) {
+        Double_t y = fInv.Q2() / (fInv.S() * fKin.X());
+        fKin.SetY(y);
     }
 
-    try {
-        fHadKin.Evaluate();
-    } catch (TKinematicException& wrongKin) {
-        std::cout << wrongKin.what() << std::endl;
-        return;
+    Double_t y_max = 1 / (1 + SQ(M) * fKin.X() / fInv.S());
+    Double_t y_min = (kMassC2 - SQ(M)) / (fInv.S() * (1 - fKin.X()));
+
+    if (fKin.Y() > y_max || fKin.Y() < y_min ||
+                fKin.X() > 1 || fKin.X() < 0) {
+        throw TKinematicException();
     }
 
+    fInv.SetX();
+    fInv.SetSx();
+    fInv.SetSp();
+    fInv.SetW2();
+    fInv.SetLambdas();
 
-    N = kPi * SQ(kAlpha) * fKin.Y() * fInv.Sx() * M / 2. / fInv.SqrtLq() * kBarn;
+    fHadKin.SetNu();
+
+    N = kBarn * (kPi * SQ(kAlpha) * fKin.Y() * fInv.Sx() * M) /
+                (2 * fInv.SqrtLq());
+
+    fHadKin.SetEh();
+    fHadKin.SetSqNuQ();
+    fHadKin.SetMomentum();
 
     if (fKin.T() >= 0.) {
         if (fHadKin.Ph() > fHadKin.Pt()) {
-            N = N * fInv.SqrtLq() / 2. / M / fHadKin.Pl();
+            N = N * fInv.SqrtLq() / 2 / M / fHadKin.Pl();
         } else {
-            N = 0.;
+            N = 0;
         }
 
-        Double_t t = SQ(m_h) - fInv.Q2() + 2. * (fHadKin.SqNuQ() * fHadKin.Pl() - fHadKin.Nu() * fHadKin.Eh());
+        Double_t t = SQ(m_h) - fInv.Q2() + 2 *
+                            (fHadKin.SqNuQ() * fHadKin.Pl() -
+                             fHadKin.Nu() * fHadKin.Eh());
         fKin.SetT(t);
-
         std::cout << "p_l: " << fHadKin.Pl() << "\t" << t << "\t"
-                  << fHadKin.Pl() - t + fInv.Q2() - SQ(m_h) + 2. * fHadKin.Nu() * fHadKin.Eh() / 2. / fHadKin.SqNuQ()
+                  << fHadKin.Pl() - t + fInv.Q2() - SQ(m_h) +
+                                            2 * fHadKin.Nu() * fHadKin.Eh() /
+                                            2 / fHadKin.SqNuQ()
                   << std::endl;
     }
 
-    fInv.EvaluateV12();
-    fHadKin.EvaluatePx2();
+    fInv.SetV12();
+    fHadKin.SetPx2();
 
-    t_min = SQ(m_h) - fInv.Q2() + 2. * (fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
+    t_min = SQ(m_h) - fInv.Q2() + 2 *
+            (  fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
+    t_max = SQ(m_h) - fInv.Q2() + 2 *
+            (- fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
 
-    Double_t tdmax;
-    tdmax = SQ(m_h) - fInv.Q2() + 2. * (- fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
-
-    try {
-        if ((fKin.T() - t_min) > kEpsMachine || fKin.T() < tdmax) {
-            throw TKinematicException();
-        }
-    } catch (TKinematicException& wrongKin) {
-        std::cout << wrongKin.what()
-                << " t     = " << fKin.T() << std::endl
-                << " t_max = " << tdmax << std::endl
-                << " t_min = " << t_min << " - " << fKin.T() - t_min << std::endl;
-        return;
+    if ((fKin.T() - t_min) > kEpsMachine || fKin.T() < t_max) {
+        throw TKinematicException();
     }
 
     SPhiH();

@@ -29,69 +29,84 @@ THadronKinematics::~THadronKinematics()
 
 
 
-void THadronKinematics::Evaluate(void)
+void THadronKinematics::SetNu(void)
 {
-    using namespace TMath;
+    fNu = fInv->Sx() / (2 * kMassProton);
+}
 
-    Double_t M   = kMassProton;
-    Double_t m_h = kMassDetectedHadron;
 
-    fNu = fInv->Sx() / (2. * M);
+
+void THadronKinematics::SetEh(void)
+{
     fEh = fNu * fKin->Z();
 
-    if (fEh < m_h) throw TKinematicException();
-
-    fPh = Sqrt(SQ(fEh) - SQ(m_h));
-
-    fSqNuQ = Sqrt(SQ(fNu) + fInv->Q2());
-
-    if (fKin->T() >= 0.) {
-        fPt = fKin->T();
-
-        if (fPh < fPt) throw TKinematicException();
-
-        fPl = Sqrt(SQ(fPh) - SQ(fPt));
-    } else {
-        fPl = (fKin->T() + fInv->Q2() - SQ(m_h) + 2. * fNu * fEh) / 2. / fSqNuQ;
-
-        if (fPh < Abs(fPl)) {
-            Double_t eps1, eps2, eps3, eps4, eps5, sum;
-
-            eps1 = fKin->T() * kEpsMachine / fSqNuQ;
-            eps2 = 2. * SQ(m_h)  * kEpsMachine / fSqNuQ;
-            eps3 = 2. * fNu * fEh * kEpsMachine / fSqNuQ;
-            eps4 = fKin->T() + fInv->Q2() - SQ(m_h) + 2. * fNu * fEh;
-            eps5 = eps4 / fSqNuQ * kEpsMachine;
-
-            sum = SQ(eps1) + SQ(eps2) + 2. * SQ(eps3) + SQ(eps5);
-
-            Double_t epspl  = Sqrt(sum) / 2.;
-            Double_t calEps = fPh - Abs(fPl);
-            if (Abs(calEps) > epspl) {
-                throw TKinematicException();
-            } else {
-               std::cout << "Zero p_t! " << fPl
-                         << "\t"         << calEps
-                         << "\t"         << epspl << std::endl;
-               fPl = Sign(1., fPl) * fPh;
-            }
-        }
-
-        fPt = Sqrt(SQ(fPh) - SQ(fPl));
+    if (fEh < kMassDetectedHadron) {
+        throw TKinematicException();
     }
 }
 
 
 
-void THadronKinematics::EvaluatePx2(void)
+void THadronKinematics::SetSqNuQ(void)
 {
-    using namespace TMath;
+    fSqNuQ = TMath::Sqrt(SQ(fNu) + fInv->Q2());
+}
 
-    Double_t M   = kMassProton;
-    Double_t m_h = kMassDetectedHadron;
 
-    Double_t px2_max = fInv->W2() - SQ(m_h);
-    fPx2 = SQ(M) + fInv->Sx() * (1. - fKin->Z()) + fKin->T();
 
-    if (fPx2 < kMassC2 || fPx2 > px2_max) throw TKinematicException();
+void THadronKinematics::SetMomentum(void)
+{
+    fPh = TMath::Sqrt(SQ(fEh) - SQ(kMassDetectedHadron));
+
+    if (fKin->T() >= 0) {
+        fPt = fKin->T();
+
+        if (fPh < fPt) {
+            throw TKinematicException();
+        }
+
+        fPl = TMath::Sqrt(SQ(fPh) - SQ(fPt));
+    } else {
+        fPl = (fKin->T() + fInv->Q2() - SQ(kMassDetectedHadron) +
+                2 * fNu * fEh) / 2 / fSqNuQ;
+
+        if (fPh < TMath::Abs(fPl)) {
+            Double_t eps1, eps2, eps3, eps4, eps5, sum;
+
+            eps1 = fKin->T() * kEpsMachine / fSqNuQ;
+            eps2 = 2 * SQ(kMassDetectedHadron)  * kEpsMachine / fSqNuQ;
+            eps3 = 2 * fNu * fEh * kEpsMachine / fSqNuQ;
+            eps4 = fKin->T() + fInv->Q2() - SQ(kMassDetectedHadron) + 2 * fNu * fEh;
+            eps5 = eps4 / fSqNuQ * kEpsMachine;
+
+            sum = SQ(eps1) + SQ(eps2) + 2 * SQ(eps3) + SQ(eps5);
+
+            Double_t epspl  = TMath::Sqrt(sum) / 2;
+            Double_t mineps = fPh - TMath::Abs(fPl);
+
+            if (TMath::Abs(mineps) > epspl) {
+                throw TKinematicException();
+            } else {
+               std::cout << "Zero p_t! " << fPl
+                         << "\t"         << mineps
+                         << "\t"         << epspl << std::endl;
+               fPl = TMath::Sign(1., fPl) * fPh;
+            }
+        }
+
+        fPt = TMath::Sqrt(SQ(fPh) - SQ(fPl));
+    }
+}
+
+
+
+void THadronKinematics::SetPx2(void)
+{
+    Double_t px2_max = fInv->W2() - SQ(kMassDetectedHadron);
+
+    fPx2 = SQ(kMassProton) + fInv->Sx() * (1 - fKin->Z()) + fKin->T();
+
+    if (fPx2 < kMassC2 || fPx2 > px2_max) {
+        throw TKinematicException();
+    }
 }

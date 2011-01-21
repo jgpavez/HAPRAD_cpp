@@ -14,9 +14,7 @@ public:
     THadronKinematics(const TRadCor* rc);
     ~THadronKinematics();
 
-    void Evaluate(void);
-    void EvaluatePx2(void);
-
+    // Getters
     Double_t    Eh(void)  const { return fEh; };
     Double_t    Pl(void)  const { return fPl; };
     Double_t    Pt(void)  const { return fPt; };
@@ -27,6 +25,12 @@ public:
     Double_t    Px2(void) const { return fPx2; };
     Double_t    Ph(void)  const { return fPh; };
 
+    // Setters
+    void    SetEh(void);
+    void    SetNu(void);
+    void    SetSqNuQ(void);
+    void    SetMomentum(void);
+    void    SetPx2(void);
 
 private:
     const TGlobalConfig*            fConfig;

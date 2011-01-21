@@ -65,6 +65,7 @@ private:
 
     //  Kinematic variables
     Double_t     t_min;
+    Double_t     t_max;
 
     // Results
     Double_t     rc;

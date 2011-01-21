@@ -14,9 +14,7 @@ public:
     TLorentzInvariants(const TRadCor* rc);
     ~TLorentzInvariants();
 
-    void        Evaluate(void);
-    void        EvaluateV12(void);
-
+    // Getters
     Double_t    S(void)   const { return fS; };
     Double_t    X(void)   const { return fX; };
     Double_t    Sx(void)  const { return fSx; };
@@ -35,6 +33,16 @@ public:
     Double_t    SqrtLx(void) const { return fSqrtLx; };
     Double_t    SqrtLm(void) const { return fSqrtLm; };
     Double_t    SqrtLq(void) const { return fSqrtLq; };
+
+    // Setters
+    void    SetS(void);
+    void    SetX(void);
+    void    SetSx(void);
+    void    SetSp(void);
+    void    SetQ2(void);
+    void    SetW2(void);
+    void    SetLambdas(void);
+    void    SetV12(void);
 
 private:
     const TGlobalConfig*            fConfig;
@@ -60,6 +68,8 @@ private:
 
     Double_t    fV1;
     Double_t    fV2;
+
+    Double_t    fY;
 };
 
 #endif
