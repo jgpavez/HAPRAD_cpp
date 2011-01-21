@@ -1,5 +1,6 @@
 #include "TLorentzInvariants.h"
 #include "TRadCor.h"
+#include "HapradErrors.h"
 #include "TGlobalConfig.h"
 #include "TKinematicalVariables.h"
 #include "THadronKinematics.h"
@@ -104,10 +105,10 @@ void TLorentzInvariants::Evaluate(void)
               << fLambdaQ << std::endl;
 #endif
 
-    if (fLambdaS < 0.) std::cout << " Conkin: lambda_s < 0 " << std::endl;
-    if (fLambdaX < 0.) std::cout << " Conkin: lambda_x < 0 " << std::endl;
-    if (fLambdaQ < 0.) std::cout << " Conkin: lambda_q < 0 " << std::endl;
-    if (fLambdaM < 0.) std::cout << " Conkin: lambda_m < 0 " << std::endl;
+    if (fLambdaS < 0) HAPRAD_WARN_MSG("Invariants", "lambda_s < 0");
+    if (fLambdaX < 0) HAPRAD_WARN_MSG("Invariants", "lambda_x < 0");
+    if (fLambdaQ < 0) HAPRAD_WARN_MSG("Invariants", "lambda_q < 0");
+    if (fLambdaM < 0) HAPRAD_WARN_MSG("Invariants", "lambda_m < 0");
 
     fSqrtLs = Sqrt(Max(0.,fLambdaS));
     fSqrtLx = Sqrt(Max(0.,fLambdaX));
@@ -146,8 +147,8 @@ void TLorentzInvariants::EvaluateV12(void)
         sints = 2. * M * Sqrt(lambda) / fSqrtLs / fSqrtLq;
         sintx = 2. * M * Sqrt(lambda) / fSqrtLx / fSqrtLq;
     } else {
-        std::cout << "sphi: sints = NaN " << lambda << std::endl;
-        std::cout << "sphi: sintx = NaN " << lambda << std::endl;
+        HAPRAD_WARN_MSG("sphi", "sints = NaN");
+        HAPRAD_WARN_MSG("sphi", "sintx = NaN");
         sints = 0.;
         sintx = 0.;
     }
