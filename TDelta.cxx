@@ -7,10 +7,6 @@
 #include "THapradUtils.h"
 #include "haprad_constants.h"
 #include "square_power.h"
-#ifdef DEBUG
-#include <iostream>
-#include <iomanip>
-#endif
 
 
 TDelta::TDelta(const TRadCor* rc)
@@ -50,14 +46,6 @@ void TDelta::Evaluate(void)
 
     Double_t S_ = fInv->S() - fInv->Q2() - fInv->V1();
     Double_t X_ = fInv->X() + fInv->Q2() - fInv->V2();
-
-#ifdef DEBUG
-    std::cout.setf(std::ios::fixed);
-    std::cout << "S'     " << std::setw(20) << std::setprecision(10)
-              << S_  << std::endl;
-    std::cout << "X'     " << std::setw(20) << std::setprecision(10)
-              << X_  << std::endl;
-#endif
 
     Double_t l_m  = Log(fInv->Q2() / SQ(m));
     Double_t Li_2 = HapradUtils::fspen(1. - fHadKin->Px2() * fInv->Q2() / (S_ * X_));
@@ -107,14 +95,6 @@ Double_t TDelta::VacPol(const Double_t Q2)
 
     Double_t sumh;
     sumh = - (a + b * TMath::Log(1. + c * Q2)) * 2. * kPi / kAlpha;
-
-#ifdef DEBUG
-    std::cout << std::endl;
-    std::cout.setf(std::ios::fixed);
-    std::cout << "suml   " << std::setw(20) << std::setprecision(10) << suml  << std::endl;
-    std::cout << "sumh   " << std::setw(20) << std::setprecision(10) << sumh  << std::endl;
-    std::cout << std::endl;
-#endif
 
     return suml + sumh;
 }

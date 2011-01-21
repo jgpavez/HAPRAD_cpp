@@ -8,9 +8,6 @@
 #include "haprad_constants.h"
 #include "square_power.h"
 #include <iostream>
-#ifdef DEBUG
-#include <iomanip>
-#endif
 
 
 TLorentzInvariants::TLorentzInvariants(const TRadCor* rc)
@@ -59,15 +56,6 @@ void TLorentzInvariants::Evaluate(void)
         y = fQ2 / (fS * fKin->X());
     }
 
-#ifdef DEBUG
-    std::cout.setf(std::ios::fixed);
-    std::cout << "S      " << std::setw(20) << std::setprecision(10)
-              << fS << std::endl;
-    std::cout << "y      " << std::setw(20) << std::setprecision(10)
-              << y << std::endl;
-    std::cout << "Q^2    " << std::setw(20) << std::setprecision(10)
-              << fQ2 << std::endl;
-#endif
 
     Double_t y_max = 1. / (1. + SQ(M) * fKin->X() / fS);
     Double_t y_min = (kMassC2 - SQ(M)) / (fS * (1. - fKin->X()));
@@ -85,25 +73,6 @@ void TLorentzInvariants::Evaluate(void)
     fLambdaM = SQ(fQ2) + 4. * SQ(m) * fQ2;
     fLambdaQ = SQ(fSx) + 4. * SQ(M) * fQ2;
 
-#ifdef DEBUG
-    std::cout.setf(std::ios::fixed);
-    std::cout << "X      " << std::setw(20) << std::setprecision(10)
-              << fX << std::endl;
-    std::cout << "S_x    " << std::setw(20) << std::setprecision(10)
-              << fSx << std::endl;
-    std::cout << "S_p    " << std::setw(20) << std::setprecision(10)
-              << fSp << std::endl;
-    std::cout << "W2     " << std::setw(20) << std::setprecision(10)
-              << fW2 << std::endl;
-    std::cout << "l_s    " << std::setw(20) << std::setprecision(10)
-              << fLambdaS << std::endl;
-    std::cout << "l_x    " << std::setw(20) << std::setprecision(10)
-              << fLambdaX << std::endl;
-    std::cout << "l_m    " << std::setw(20) << std::setprecision(10)
-              << fLambdaM << std::endl;
-    std::cout << "l_q    " << std::setw(20) << std::setprecision(10)
-              << fLambdaQ << std::endl;
-#endif
 
     if (fLambdaS < 0) HAPRAD_WARN_MSG("Invariants", "lambda_s < 0");
     if (fLambdaX < 0) HAPRAD_WARN_MSG("Invariants", "lambda_x < 0");
@@ -159,12 +128,4 @@ void TLorentzInvariants::EvaluateV12(void)
 
     fV1 = (fS * fHadKin->Eh() - fSqrtLs * v1) / M;
     fV2 = (fX * fHadKin->Eh() - fSqrtLx * v2) / M;
-
-#ifdef DEBUG
-    std::cout.setf(std::ios::fixed);
-    std::cout << "V1     " << std::setw(20) << std::setprecision(10)
-              << fV1 << std::endl;
-    std::cout << "V2     " << std::setw(20) << std::setprecision(10)
-              << fV2 << std::endl;
-#endif
 }

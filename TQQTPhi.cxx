@@ -7,10 +7,6 @@
 #include "haprad_constants.h"
 #include "square_power.h"
 #include "Math/GSLIntegrator.h"
-#ifdef DEBUG
-#include <iostream>
-#include <iomanip>
-#endif
 
 
 TQQTPhi::TQQTPhi(const TRadCor* rc)
@@ -22,22 +18,9 @@ TQQTPhi::TQQTPhi(const TRadCor* rc)
 
     fTauMax = (fInv->Sx() + fInv->SqrtLq()) / (2. * SQ(kMassProton));
     fTauMin = - fInv->Q2() / SQ(kMassProton) / fTauMax;
-#ifdef DEBUG
-    std::cout.setf(std::ios::fixed);
-    std::cout << "  tau_max  " << std::setw(20) << std::setprecision(10)
-              << fTauMax << std::endl;
-    std::cout << "  tau_min  " << std::setw(20) << std::setprecision(10)
-              << fTauMin << std::endl;
-#endif
 
     double tau_1 = - fInv->Q2() / fInv->S();
     double tau_2 =   fInv->Q2() / fInv->X();
-#ifdef DEBUG
-    std::cout << "  tau_1  " << std::setw(20) << std::setprecision(10)
-              << tau_1 << std::endl;
-    std::cout << "  tau_2  " << std::setw(20) << std::setprecision(10)
-              << tau_2 << std::endl;
-#endif
 
     fTauArray[0] = fTauMin;
     fTauArray[1] = tau_1 - 0.15 * (tau_1 - fTauMin);
@@ -65,9 +48,6 @@ ROOT::Math::IBaseFunctionOneDim* TQQTPhi::Clone() const
 
 double TQQTPhi::DoEval(double phi) const
 {
-#ifdef DEBUG
-    std::cout << "  QQTPhi(" << phi << ")" << std::endl << std::endl;
-#endif
     ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kADAPTIVE,
                                  ROOT::Math::Integration::kGAUSS21);
     TRV2LN rv2ln(fRC, phi);

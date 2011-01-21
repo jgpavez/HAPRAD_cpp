@@ -6,11 +6,6 @@
 #include "haprad_constants.h"
 #include "square_power.h"
 
-#ifdef DEBUG
-#include <iostream>
-#include <iomanip>
-#endif
-
 
 TBorn::TBorn(const TRadCor* rc)
   : fH(rc)

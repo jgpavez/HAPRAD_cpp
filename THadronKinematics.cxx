@@ -38,20 +38,10 @@ void THadronKinematics::Evaluate(void)
 
     fNu = fInv->Sx() / (2. * M);
     fEh = fNu * fKin->Z();
-#ifdef DEBUG
-    std::cout << "nu     " << std::setw(20) << std::setprecision(10)
-              << fNu << std::endl;
-    std::cout << "Eh     " << std::setw(20) << std::setprecision(10)
-              << fEh << std::endl;
-#endif
 
     if (fEh < m_h) throw TKinematicException();
 
     fPh = Sqrt(SQ(fEh) - SQ(m_h));
-#ifdef DEBUG
-    std::cout << "p_h    " << std::setw(20) << std::setprecision(10)
-              << fPh  << std::endl;
-#endif
 
     fSqNuQ = Sqrt(SQ(fNu) + fInv->Q2());
 

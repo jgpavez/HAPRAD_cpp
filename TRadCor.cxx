@@ -296,11 +296,6 @@ void TRadCor::Haprad(void)
 
 
     N = kPi * SQ(kAlpha) * fKin.Y() * fInv.Sx() * M / 2. / fInv.SqrtLq() * kBarn;
-#ifdef DEBUG
-    std::cout.setf(std::ios::fixed);
-    std::cout << "N      " << std::setw(20)
-                           << std::setprecision(10) << N << std::endl;
-#endif
 
     if (fKin.T() >= 0.) {
         if (fHadKin.Ph() > fHadKin.Pt()) {
@@ -316,14 +311,6 @@ void TRadCor::Haprad(void)
                   << fHadKin.Pl() - t + fInv.Q2() - SQ(m_h) + 2. * fHadKin.Nu() * fHadKin.Eh() / 2. / fHadKin.SqNuQ()
                   << std::endl;
     }
-#ifdef DEBUG
-    std::cout << "Pt     " << std::setw(20) << std::setprecision(10)
-                           << fHadKin.Pt() << std::endl;
-    std::cout << "Pl     " << std::setw(20) << std::setprecision(10)
-                           << fHadKin.Pl() << std::endl;
-    std::cout << "tdif   " << std::setw(20) << std::setprecision(10)
-                           << fKin.T() << std::endl;
-#endif
 
     fInv.EvaluateV12();
     fHadKin.EvaluatePx2();
