@@ -11,6 +11,8 @@ leptoproduction, based in the original FORTRAN code HAPRAD2_.
           R. Oyarzun and
           S. Mancilla
 
+:Version: 0.5
+
 ==========================  ==================================================
 ``TRadCor``                 the main class
 ``TGlobalConfig``           class storing global configurations
