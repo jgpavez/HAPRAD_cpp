@@ -32,6 +32,8 @@ public:
     void    SetMomentum(void);
     void    SetPx2(void);
 
+    void    Clear(void);
+
 private:
     const TGlobalConfig*            fConfig;
     const TKinematicalVariables*    fKin;

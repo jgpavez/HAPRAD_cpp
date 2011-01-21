@@ -35,3 +35,15 @@ void TKinematicalVariables::SetAll(Double_t x, Double_t y, Double_t z,
     fPhiH = phi;
     fE    = E;
 }
+
+
+
+void TKinematicalVariables::Clear(void)
+{
+    fX    = 0;
+    fY    = 0;
+    fZ    = 0;
+    fT    = 0;
+    fPhiH = 0;
+    fE    = 0;
+}

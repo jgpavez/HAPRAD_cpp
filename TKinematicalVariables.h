@@ -26,6 +26,7 @@ public:
 
     void        SetAll(Double_t x, Double_t Q2, Double_t z,
                        Double_t p_t, Double_t phi, Double_t E);
+    void        Clear(void);
 
 
 private:

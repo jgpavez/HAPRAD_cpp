@@ -44,6 +44,8 @@ public:
     void    SetLambdas(void);
     void    SetV12(void);
 
+    void    Clear(void);
+
 private:
     const TGlobalConfig*            fConfig;
     const TKinematicalVariables*    fKin;

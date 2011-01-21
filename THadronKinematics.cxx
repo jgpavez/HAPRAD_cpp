@@ -41,6 +41,8 @@ void THadronKinematics::SetEh(void)
     fEh = fNu * fKin->Z();
 
     if (fEh < kMassDetectedHadron) {
+        std::cout << "    E_h: " << fEh
+                  << std::endl;
         throw TKinematicException();
     }
 }
@@ -62,6 +64,9 @@ void THadronKinematics::SetMomentum(void)
         fPt = fKin->T();
 
         if (fPh < fPt) {
+            std::cout << "    p_h: " << fPh
+                      << "    p_t: " << fPt
+                      << std::endl;
             throw TKinematicException();
         }
 
@@ -85,11 +90,14 @@ void THadronKinematics::SetMomentum(void)
             Double_t mineps = fPh - TMath::Abs(fPl);
 
             if (TMath::Abs(mineps) > epspl) {
+                std::cout << "    p_h: " << fPh
+                          << "    p_l: " << fPl
+                          << std::endl;
                 throw TKinematicException();
             } else {
-               std::cout << "Zero p_t! " << fPl
-                         << "\t"         << mineps
-                         << "\t"         << epspl << std::endl;
+               std::cout << "    Zero p_t! " << fPl
+                         << "\t"             << mineps
+                         << "\t"             << epspl << std::endl;
                fPl = TMath::Sign(1., fPl) * fPh;
             }
         }
@@ -107,6 +115,23 @@ void THadronKinematics::SetPx2(void)
     fPx2 = SQ(kMassProton) + fInv->Sx() * (1 - fKin->Z()) + fKin->T();
 
     if (fPx2 < kMassC2 || fPx2 > px2_max) {
+        std::cout << "    px2:    " << fPx2
+                  << "    mc2:    " << kMassC2
+                  << "    px2max: " << px2_max
+                  << std::endl;
         throw TKinematicException();
     }
+}
+
+
+
+void THadronKinematics::Clear(void)
+{
+    fEh = 0;
+    fPl = 0;
+    fPt = 0;
+    fNu = 0;
+    fSqNuQ = 0;
+    fPx2 = 0;
+    fPh = 0;
 }

@@ -184,7 +184,10 @@ void TRadCor::CalculateRCFactor(void)
         try {
             Haprad();
         } catch (TKinematicException& wrongKin) {
-            std::cout << wrongKin.what() << std::endl;
+            std::cerr << wrongKin.what() << std::endl;
+            fKin.Clear();
+            fInv.Clear();
+            fHadKin.Clear();
         }
 }
 
@@ -238,7 +241,10 @@ Double_t TRadCor::GetRCFactor(void)
         try {
             Haprad();
         } catch (TKinematicException& wrongKin) {
-            std::cout << wrongKin.what() << std::endl;
+            std::cerr << wrongKin.what() << std::endl;
+            fKin.Clear();
+            fInv.Clear();
+            fHadKin.Clear();
             return 0;
         }
 
@@ -296,6 +302,9 @@ void TRadCor::Haprad(void)
 
     if (fKin.Y() > y_max || fKin.Y() < y_min ||
                 fKin.X() > 1 || fKin.X() < 0) {
+        std::cout << "    y: " << fKin.Y()
+                  << "    x: " << fKin.X()
+                  << std::endl;
         throw TKinematicException();
     }
 
@@ -325,7 +334,7 @@ void TRadCor::Haprad(void)
                             (fHadKin.SqNuQ() * fHadKin.Pl() -
                              fHadKin.Nu() * fHadKin.Eh());
         fKin.SetT(t);
-        std::cout << "p_l: " << fHadKin.Pl() << "\t" << t << "\t"
+        std::cout << "    p_l: " << fHadKin.Pl() << "\t" << t << "\t"
                   << fHadKin.Pl() - t + fInv.Q2() - SQ(m_h) +
                                             2 * fHadKin.Nu() * fHadKin.Eh() /
                                             2 / fHadKin.SqNuQ()
@@ -341,6 +350,10 @@ void TRadCor::Haprad(void)
             (- fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
 
     if ((fKin.T() - t_min) > kEpsMachine || fKin.T() < t_max) {
+        std::cout << "    t:     " << fKin.T()
+                  << "    t_min: " << t_min
+                  << "    t_max: " << t_max
+                  << std::endl;
         throw TKinematicException();
     }
 
