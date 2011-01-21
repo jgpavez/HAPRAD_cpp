@@ -15,9 +15,17 @@ public:
             Double_t p_t, Double_t phi, Double_t maxMx2);
     ~TRadCor();
 
+    void        CalculateRCFactor(void);
+    void        CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
+                                  Double_t z, Double_t p_t, Double_t phi, Double_t maxMx2);
     Double_t    GetRCFactor(void);
     Double_t    GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
                             Double_t p_t, Double_t phi, Double_t maxMx2);
+
+
+    Double_t    GetFactor1(void);
+    Double_t    GetFactor2(void);
+    Double_t    GetFactor3(void);
 
     void        SetParameters(Double_t E, Double_t x, Double_t Q2, Double_t z,
                               Double_t p_t, Double_t phi, Double_t maxMx2);

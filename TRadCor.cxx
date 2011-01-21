@@ -178,6 +178,51 @@ void TRadCor::Setup(void)
 
 
 
+void TRadCor::CalculateRCFactor(void)
+{
+    if (Mx2 > maxMx2)
+        Haprad();
+}
+
+
+
+void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
+                                Double_t z, Double_t p_t, Double_t phi,
+                                Double_t maxMx2)
+{
+    SetParameters(E,x,Q2,z,p_t,phi,maxMx2);
+    CalculateRCFactor();
+}
+
+
+
+Double_t TRadCor::GetFactor1(void)
+{
+    Double_t sigma_obs_f1 = sig_obs + tai[0];
+
+    return sigma_obs_f1 / sigma_born;
+}
+
+
+
+Double_t TRadCor::GetFactor2(void)
+{
+    Double_t sigma_obs_f2 = sig_obs + tai[1];
+
+    return sigma_obs_f2 / sigma_born;
+}
+
+
+
+Double_t TRadCor::GetFactor3(void)
+{
+    Double_t sigma_obs_f3 = sig_obs + tai[0] + tai[1] / 2;
+
+    return sigma_obs_f3 / sigma_born;
+}
+
+
+
 Double_t TRadCor::GetRCFactor(void)
 {
     // Get the radiative correction factor. You must set the parameters before
@@ -187,6 +232,8 @@ Double_t TRadCor::GetRCFactor(void)
 
     if (Mx2 > maxMx2) {
         Haprad();
+
+        sig_obs += tai[0] + tai[1];
         rc = sig_obs / sigma_born;
         sig_obs *= 1E-3;
         sigma_born *= 1E-3;
@@ -319,8 +366,7 @@ void TRadCor::SPhiH(void)
     qqt(tai); // fix this
 
     Double_t extai1 = TMath::Exp(fDeltas.Inf());
-    sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac()) +
-                                                            tai[0] + tai[1];
+    sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac());
 }
 
 
