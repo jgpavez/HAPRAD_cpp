@@ -17,8 +17,7 @@
 
 
 TRadCor::TRadCor()
-: sigma_born(0.), sig_obs(0.), tail(0.),
-  M(kMassProton), m(kMassElectron), m_h(kMassDetectedHadron)
+: sigma_born(0.), sig_obs(0.)
 {
     // Default constructor
 
@@ -99,7 +98,7 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     rc = 0;
 
     Double_t S_x = - fKin->Y() / fKin->X();
-    Double_t Mx2 = SQ(M) + S_x * (1 - fKin->Z()) + fKin->T();
+    Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + fKin->T();
 
     try {
         if (Mx2 > maxMx2) {
@@ -187,8 +186,8 @@ void TRadCor::Initialization(void)
         fKin->SetY(y);
     }
 
-    Double_t y_max = 1 / (1 + SQ(M) * fKin->X() / fInv->S());
-    Double_t y_min = (kMassC2 - SQ(M)) / (fInv->S() * (1 - fKin->X()));
+    Double_t y_max = 1 / (1 + SQ(kMassProton) * fKin->X() / fInv->S());
+    Double_t y_min = (kMassC2 - SQ(kMassProton)) / (fInv->S() * (1 - fKin->X()));
 
     if (fKin->Y() > y_max || fKin->Y() < y_min ||
                 fKin->X() > 1 || fKin->X() < 0) {
@@ -206,7 +205,7 @@ void TRadCor::Initialization(void)
 
     fHadKin->SetNu();
 
-    N = kBarn * (kPi * SQ(kAlpha) * fKin->Y() * fInv->Sx() * M) /
+    N = kBarn * (kPi * SQ(kAlpha) * fKin->Y() * fInv->Sx() * kMassProton) /
                 (2 * fInv->SqrtLq());
 
     fHadKin->SetEh();
@@ -215,17 +214,17 @@ void TRadCor::Initialization(void)
 
     if (fKin->T() >= 0.) {
         if (fHadKin->Ph() > fHadKin->Pt()) {
-            N = N * fInv->SqrtLq() / 2 / M / fHadKin->Pl();
+            N = N * fInv->SqrtLq() / 2 / kMassProton / fHadKin->Pl();
         } else {
             N = 0;
         }
 
-        Double_t t = SQ(m_h) - fInv->Q2() + 2 *
+        Double_t t = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
                             (fHadKin->SqNuQ() * fHadKin->Pl() -
                              fHadKin->Nu() * fHadKin->Eh());
         fKin->SetT(t);
         std::cout << "    p_l: " << fHadKin->Pl() << "\t" << t << "\t"
-                  << fHadKin->Pl() - t + fInv->Q2() - SQ(m_h) +
+                  << fHadKin->Pl() - t + fInv->Q2() - SQ(kMassDetectedHadron) +
                                             2 * fHadKin->Nu() * fHadKin->Eh() /
                                             2 / fHadKin->SqNuQ()
                   << std::endl;
@@ -234,9 +233,9 @@ void TRadCor::Initialization(void)
     fInv->SetV12();
     fHadKin->SetPx2();
 
-    t_min = SQ(m_h) - fInv->Q2() + 2 *
+    t_min = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
             (  fHadKin->SqNuQ() * fHadKin->Ph() - fHadKin->Nu() * fHadKin->Eh());
-    t_max = SQ(m_h) - fInv->Q2() + 2 *
+    t_max = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
             (- fHadKin->SqNuQ() * fHadKin->Ph() - fHadKin->Nu() * fHadKin->Eh());
 
     if ((fKin->T() - t_min) > kEpsMachine || fKin->T() < t_max) {
@@ -308,8 +307,8 @@ void TRadCor::qqt(Double_t tai[])
     phi[2] = 2. * kPi - 0.01 * kPi;
     phi[3] = 2. * kPi;
 
-    double tau_max = (fInv->Sx() + fInv->SqrtLq()) / (2. * SQ(M));
-    double tau_min = - fInv->Q2() / SQ(M) / tau_max;
+    double tau_max = (fInv->Sx() + fInv->SqrtLq()) / (2. * SQ(kMassProton));
+    double tau_min = - fInv->Q2() / SQ(kMassProton) / tau_max;
     tau[0] = tau_min;
     tau[1] = tau_1 - 0.15 * (tau_1 - tau_min);
     tau[2] = tau_1 + 0.15 * (tau_2 - tau_1);
@@ -354,7 +353,8 @@ void TRadCor::qqt(Double_t tai[])
         }
     }
 
-    tai[1] = - kAlpha / (64. * TMath::Power(kPi,5.) * fInv->SqrtLq() * M) * N * rere;
+    tai[1] = - kAlpha * N * rere /
+                (64 * TMath::Power(kPi,5.) * fInv->SqrtLq() * kMassProton);
     std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
 }
 

@@ -48,8 +48,6 @@ private:
     TLorentzInvariants*     fInv;
     THadronKinematics*      fHadKin;
 
-    Double_t     E;        // The beam energy
-
     //  Kinematic variables
     Double_t     t_min;
     Double_t     t_max;
@@ -58,19 +56,11 @@ private:
     Double_t     rc;
     Double_t     sigma_born;    // sigma_0
     Double_t     sig_obs;       // sigma_{obs}
-    Double_t     tail;
-    Double_t     tai[3];
-
-    // Masses
-    Double_t     M;
-    Double_t     m;
-    Double_t     m_h;
+    Double_t     tai[2];
 
     // Integration
     Double_t     N;                // Normalization factor
-    Double_t     pl;
     Int_t        ita;
-    Double_t     phi_rad;
 };
 
 #endif
