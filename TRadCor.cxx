@@ -1,5 +1,5 @@
 #include "TRadCor.h"
-#include "TGlobalConfig.h"
+#include "THapradConfig.h"
 #include "TKinematicalVariables.h"
 #include "TLorentzInvariants.h"
 #include "THadronKinematics.h"
@@ -22,7 +22,7 @@ TRadCor::TRadCor()
 {
     // Default constructor
 
-    fConfig = new TGlobalConfig();
+    fConfig = new THapradConfig();
 }
 
 

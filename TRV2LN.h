@@ -5,7 +5,7 @@
 #include "TStructFunctionArray.h"
 
 class TRadCor;
-class TGlobalConfig;
+class THapradConfig;
 class TKinematicalVariables;
 class TLorentzInvariants;
 class THadronKinematics;
@@ -22,7 +22,7 @@ private:
     virtual double DoEval(double tauln) const;
 
     const TRadCor*                  fRC;
-    const TGlobalConfig*            fConfig;
+    const THapradConfig*            fConfig;
     const TKinematicalVariables*    fKin;
     const TLorentzInvariants*       fInv;
     const THadronKinematics*        fHadKin;

@@ -15,7 +15,7 @@ leptoproduction, based in the original FORTRAN code HAPRAD2_.
 
 ==========================  ==================================================
 ``TRadCor``                 the main class
-``TGlobalConfig``           class storing global configurations
+``THapradConfig``           class storing global configurations
 ``TKinematicalVariables``   class storing the input data (the five kinematical
                             variables describing the cross section)
 ``TLorentzInvariants``      class storing the used Lorentz invariants

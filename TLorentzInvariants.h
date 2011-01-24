@@ -3,14 +3,14 @@
 
 #include "TROOT.h"
 
-class TGlobalConfig;
+class THapradConfig;
 class TKinematicalVariables;
 class THadronKinematics;
 
 
 class TLorentzInvariants {
 public:
-    TLorentzInvariants(const TGlobalConfig* config,
+    TLorentzInvariants(const THapradConfig* config,
                        const TKinematicalVariables* kin);
     ~TLorentzInvariants();
 
@@ -48,7 +48,7 @@ public:
     void    Clear(void);
 
 private:
-    const TGlobalConfig*            fConfig;
+    const THapradConfig*            fConfig;
     const TKinematicalVariables*    fKin;
     const THadronKinematics*        fHadKin;
 

@@ -4,7 +4,7 @@
 #include "TROOT.h"
 
 class TRadCor;
-class TGlobalConfig;
+class THapradConfig;
 class TKinematicalVariables;
 class TLorentzInvariants;
 class THadronKinematics;
@@ -25,7 +25,7 @@ public:
                         { return fData[fCols * row + col]; };
 
 private:
-    const TGlobalConfig*            fConfig;
+    const THapradConfig*            fConfig;
     const TKinematicalVariables*    fKin;
     const TLorentzInvariants*       fInv;
     const THadronKinematics*        fHadKin;

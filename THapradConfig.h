@@ -4,9 +4,9 @@
 #include "TROOT.h"
 
 
-class TGlobalConfig {
+class THapradConfig {
 public:
-    TGlobalConfig();
+    THapradConfig();
 
     Int_t       PolarizationType(void) const { return fPolType; };
     Int_t       LeptonType(void) const { return fLepton; };

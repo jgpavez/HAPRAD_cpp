@@ -1,6 +1,6 @@
 #include "TQQTPhi.h"
 #include "TRadCor.h"
-#include "TGlobalConfig.h"
+#include "THapradConfig.h"
 #include "TKinematicalVariables.h"
 #include "TLorentzInvariants.h"
 #include "TRV2LN.h"

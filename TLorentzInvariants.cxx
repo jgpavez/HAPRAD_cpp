@@ -1,6 +1,6 @@
 #include "TLorentzInvariants.h"
 #include "HapradErrors.h"
-#include "TGlobalConfig.h"
+#include "THapradConfig.h"
 #include "TKinematicalVariables.h"
 #include "THadronKinematics.h"
 #include "THapradException.h"
@@ -9,7 +9,7 @@
 #include <iostream>
 
 
-TLorentzInvariants::TLorentzInvariants(const TGlobalConfig* config,
+TLorentzInvariants::TLorentzInvariants(const THapradConfig* config,
                                        const TKinematicalVariables* kin)
  : fConfig(config), fKin(kin), fHadKin(0),
    fS(0), fX(0), fSx(0), fSp(0), fQ2(0), fY(0)
