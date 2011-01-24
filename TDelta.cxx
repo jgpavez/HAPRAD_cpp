@@ -29,8 +29,6 @@ TDelta::~TDelta()
 
 void TDelta::Evaluate(void)
 {
-    using namespace TMath;
-
     Double_t m;
 
     switch(fConfig->PolarizationType()) {
@@ -47,11 +45,11 @@ void TDelta::Evaluate(void)
     Double_t S_ = fInv->S() - fInv->Q2() - fInv->V1();
     Double_t X_ = fInv->X() + fInv->Q2() - fInv->V2();
 
-    Double_t l_m  = Log(fInv->Q2() / SQ(m));
-    Double_t Li_2 = HapradUtils::fspen(1. - fHadKin->Px2() * fInv->Q2() / (S_ * X_));
+    Double_t l_m  = TMath::Log(fInv->Q2() / SQ(m));
+    Double_t Li_2 = HapradUtils::fspen(1 - fHadKin->Px2() * fInv->Q2() / (S_ * X_));
 
-    fVR  = 1.5 * l_m - 2. - 0.5 * SQ(Log(X_ / S_)) + Li_2 - SQ(kPi) / 6.;
-    fInf = (l_m - 1.) * Log(SQ(fHadKin->Px2() - kMassC2) / S_ / X_);
+    fVR  = 1.5 * l_m - 2 - 0.5 * SQ(TMath::Log(X_ / S_)) + Li_2 - SQ(kPi) / 6;
+    fInf = (l_m - 1) * TMath::Log(SQ(fHadKin->Px2() - kMassC2) / S_ / X_);
     fVac = HapradUtils::vacpol(fInv->Q2());
 
     fVR  *= kAlpha / kPi;
