@@ -22,8 +22,6 @@ public:
     void        Evaluate(void);
 
 private:
-    Double_t    VacPol(const Double_t Q2);
-
     const TGlobalConfig*            fConfig;
     const TKinematicalVariables*    fKin;
     const TLorentzInvariants*       fInv;
