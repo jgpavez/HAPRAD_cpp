@@ -1,9 +1,13 @@
 #include "TRadCor.h"
-#include "THapradException.h"
+#include "TGlobalConfig.h"
+#include "TKinematicalVariables.h"
+#include "TLorentzInvariants.h"
+#include "THadronKinematics.h"
 #include "TDelta.h"
-#include "TQQTPhi.h"
 #include "TBorn.h"
+#include "TQQTPhi.h"
 #include "TRV2TR.h"
+#include "THapradException.h"
 #include "haprad_constants.h"
 #include "square_power.h"
 #include "Math/GSLIntegrator.h"
@@ -13,32 +17,12 @@
 
 
 TRadCor::TRadCor()
-: fInv(this), fHadKin(this),
-  maxMx2(0.), Mx2(0.),
-  sigma_born(0.), sig_obs(0.), tail(0.),
+: sigma_born(0.), sig_obs(0.), tail(0.),
   M(kMassProton), m(kMassElectron), m_h(kMassDetectedHadron)
 {
     // Default constructor
-}
 
-
-
-TRadCor::TRadCor(Double_t E, Double_t x, Double_t Q2, Double_t z,
-                 Double_t p_t, Double_t phi, Double_t maxMx2)
-: fInv(this), fHadKin(this),
-  maxMx2(0.), Mx2(0.),
-  sigma_born(0.), sig_obs(0.), tail(0.),
-  M(kMassProton), m(kMassElectron), m_h(kMassDetectedHadron)
-{
-    // Normal constructor for a radiative correction object
-    //
-    // The E parameter is the energy of the beam, the x, Q2, z, p_t and phi
-    // are the values of the kinematical variables who describe the cross
-    // section of hadron electroproduction, and maxMx2 is the maximum amount
-    // of missing mass.
-
-    fKin.SetAll(x,-Q2,z,p_t,phi/kRadianDeg,E);
-    Setup();
+    fConfig = new TGlobalConfig();
 }
 
 
@@ -46,78 +30,8 @@ TRadCor::TRadCor(Double_t E, Double_t x, Double_t Q2, Double_t z,
 TRadCor::~TRadCor()
 {
     // Default destructor
-}
 
-
-
-void TRadCor::SetParameters(Double_t E, Double_t x, Double_t Q2, Double_t z,
-                            Double_t p_t, Double_t phi, Double_t maxMx2)
-{
-    // Set the values for the variables used to calculate the radiative
-    // correction.
-    //
-    // The E parameter is the energy of the beam, the x, Q2, z, p_t and phi
-    // are the values of the kinematical variables who describe the cross
-    // section of hadron electroproduction, and maxMx2 is the maximum amount
-    // of missing mass.
-
-    this->maxMx2 = maxMx2;
-
-    fKin.SetAll(x,-Q2,z,p_t,phi/kRadianDeg,E);
-    Setup();
-}
-
-
-
-void TRadCor::SetEbeam(Double_t E)
-{
-    fKin.SetE(E);
-}
-
-
-
-void TRadCor::SetX(Double_t x)
-{
-    fKin.SetX(x);
-    Setup();
-}
-
-
-
-void TRadCor::SetQ2(Double_t Q2)
-{
-    fKin.SetY(-Q2);
-    Setup();
-}
-
-
-
-void TRadCor::SetZ(Double_t z)
-{
-    fKin.SetZ(z);
-    Setup();
-}
-
-
-
-void TRadCor::SetPt(Double_t p_t)
-{
-    fKin.SetT(p_t);
-    Setup();
-}
-
-
-
-void TRadCor::SetPhi(Double_t phi)
-{
-    fKin.SetPhiH(phi/kRadianDeg);
-}
-
-
-
-void TRadCor::SetMaxMx(Double_t maxMx2)
-{
-    this->maxMx2 = maxMx2;
+    delete fConfig;
 }
 
 
@@ -128,7 +42,7 @@ void TRadCor::RegisteredLepton(Int_t type)
     //
     // Default is 1.
 
-    fConfig.SetLepton(type);
+    fConfig->SetLepton(type);
 }
 
 
@@ -139,7 +53,7 @@ void TRadCor::IntegratePhiRad(Int_t type)
     //
     // Default is 0;
 
-    fConfig.SetIntegrationPhiRad(type);
+    fConfig->SetIntegrationPhiRad(type);
 }
 
 
@@ -150,7 +64,7 @@ void TRadCor::IntegratePhiHad(Int_t type)
     //
     // Default is 0;
 
-    fConfig.SetIntegrationPhiHad(type);
+    fConfig->SetIntegrationPhiHad(type);
 }
 
 
@@ -163,32 +77,7 @@ void TRadCor::SetPolarization(Int_t type)
     //
     // Default is 0;
 
-    fConfig.SetPolarization(type);
-}
-
-
-
-void TRadCor::Setup(void)
-{
-    // Calculate the missing mass squared
-
-    Double_t S_x = - fKin.Y() / fKin.X();
-    Mx2 = SQ(M) + S_x * (1.0 - fKin.Z()) + fKin.T();
-}
-
-
-
-void TRadCor::CalculateRCFactor(void)
-{
-    if (Mx2 > maxMx2)
-        try {
-            Haprad();
-        } catch (TKinematicException& wrongKin) {
-            std::cerr << wrongKin.what() << std::endl;
-            fKin.Clear();
-            fInv.Clear();
-            fHadKin.Clear();
-        }
+    fConfig->SetPolarization(type);
 }
 
 
@@ -197,8 +86,41 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
                                 Double_t z, Double_t p_t, Double_t phi,
                                 Double_t maxMx2)
 {
-    SetParameters(E,x,Q2,z,p_t,phi,maxMx2);
-    CalculateRCFactor();
+    CreateVariables(E,x,Q2,z,p_t,phi);
+    rc = 0;
+
+    Double_t S_x = - fKin->Y() / fKin->X();
+    Double_t Mx2 = SQ(M) + S_x * (1 - fKin->Z()) + fKin->T();
+
+    try {
+        if (Mx2 > maxMx2) {
+            Initialization();
+            SPhiH();
+
+            sig_obs += tai[0] + tai[1];
+            rc = sig_obs / sigma_born;
+        }
+    } catch (TKinematicException& wrongKin) {
+        std::cerr << wrongKin.what() << std::endl;
+    }
+
+    DeleteVariables();
+}
+
+
+
+Double_t TRadCor::GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
+                              Double_t p_t, Double_t phi, Double_t maxMx2)
+{
+    // Get the radiative correction factor for the given parameters.
+    //
+    // The E parameter is the energy of the beam, the x, Q2, z, p_t and phi
+    // are the values of the kinematical variables who describe the cross
+    // section of hadron electroproduction, and maxMx2 is the maximum amount of
+    // missing mass.
+
+    CalculateRCFactor(E,x,Q2,z,p_t,phi,maxMx2);
+    return rc;
 }
 
 
@@ -230,134 +152,75 @@ Double_t TRadCor::GetFactor3(void)
 
 
 
-Double_t TRadCor::GetRCFactor(void)
+void TRadCor::Initialization(void)
 {
-    // Get the radiative correction factor. You must set the parameters before
-    // using this method.
+    fInv->SetS();
+    fInv->SetQ2();
 
-    Double_t tail;
-
-    if (Mx2 > maxMx2) {
-        try {
-            Haprad();
-        } catch (TKinematicException& wrongKin) {
-            std::cerr << wrongKin.what() << std::endl;
-            fKin.Clear();
-            fInv.Clear();
-            fHadKin.Clear();
-            return 0;
-        }
-
-        sig_obs += tai[0] + tai[1];
-        rc = sig_obs / sigma_born;
-        sig_obs *= 1E-3;
-        sigma_born *= 1E-3;
-        tail = tai[1] * 1E-3;
-
-        std::cout << std::endl;
-        std::cout.setf(std::ios::fixed);
-        std::cout << "    sib    " << std::setw(10)
-                                   << std::setprecision(7) << sigma_born
-                  << "    sig    " << std::setw(10)
-                                   << std::setprecision(7) << sig_obs
-                  << "    tail   " << std::setw(10)
-                                   << std::setprecision(7) << tail << std::endl;
-    } else {
-        rc = 0;
+    if (fKin->Y() < 0) {
+        Double_t y = fInv->Q2() / (fInv->S() * fKin->X());
+        fKin->SetY(y);
     }
 
-    return rc;
-}
+    Double_t y_max = 1 / (1 + SQ(M) * fKin->X() / fInv->S());
+    Double_t y_min = (kMassC2 - SQ(M)) / (fInv->S() * (1 - fKin->X()));
 
-
-
-Double_t TRadCor::GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
-                              Double_t p_t, Double_t phi, Double_t maxMx2)
-{
-    // Get the radiative correction factor for the given parameters.
-    //
-    // The E parameter is the energy of the beam, the x, Q2, z, p_t and phi
-    // are the values of the kinematical variables who describe the cross
-    // section of hadron electroproduction, and maxMx2 is the maximum amount of
-    // missing mass.
-
-    SetParameters(E,x,Q2,z,p_t,phi,maxMx2);
-    return GetRCFactor();
-}
-
-
-
-void TRadCor::Haprad(void)
-{
-    fInv.SetS();
-    fInv.SetQ2();
-
-    if (fKin.Y() < 0) {
-        Double_t y = fInv.Q2() / (fInv.S() * fKin.X());
-        fKin.SetY(y);
-    }
-
-    Double_t y_max = 1 / (1 + SQ(M) * fKin.X() / fInv.S());
-    Double_t y_min = (kMassC2 - SQ(M)) / (fInv.S() * (1 - fKin.X()));
-
-    if (fKin.Y() > y_max || fKin.Y() < y_min ||
-                fKin.X() > 1 || fKin.X() < 0) {
-        std::cout << "    y: " << fKin.Y()
-                  << "    x: " << fKin.X()
+    if (fKin->Y() > y_max || fKin->Y() < y_min ||
+                fKin->X() > 1 || fKin->X() < 0) {
+        std::cout << "    y: " << fKin->Y()
+                  << "    x: " << fKin->X()
                   << std::endl;
         throw TKinematicException();
     }
 
-    fInv.SetX();
-    fInv.SetSx();
-    fInv.SetSp();
-    fInv.SetW2();
-    fInv.SetLambdas();
+    fInv->SetX();
+    fInv->SetSx();
+    fInv->SetSp();
+    fInv->SetW2();
+    fInv->SetLambdas();
 
-    fHadKin.SetNu();
+    fHadKin->SetNu();
 
-    N = kBarn * (kPi * SQ(kAlpha) * fKin.Y() * fInv.Sx() * M) /
-                (2 * fInv.SqrtLq());
+    N = kBarn * (kPi * SQ(kAlpha) * fKin->Y() * fInv->Sx() * M) /
+                (2 * fInv->SqrtLq());
 
-    fHadKin.SetEh();
-    fHadKin.SetSqNuQ();
-    fHadKin.SetMomentum();
+    fHadKin->SetEh();
+    fHadKin->SetSqNuQ();
+    fHadKin->SetMomentum();
 
-    if (fKin.T() >= 0.) {
-        if (fHadKin.Ph() > fHadKin.Pt()) {
-            N = N * fInv.SqrtLq() / 2 / M / fHadKin.Pl();
+    if (fKin->T() >= 0.) {
+        if (fHadKin->Ph() > fHadKin->Pt()) {
+            N = N * fInv->SqrtLq() / 2 / M / fHadKin->Pl();
         } else {
             N = 0;
         }
 
-        Double_t t = SQ(m_h) - fInv.Q2() + 2 *
-                            (fHadKin.SqNuQ() * fHadKin.Pl() -
-                             fHadKin.Nu() * fHadKin.Eh());
-        fKin.SetT(t);
-        std::cout << "    p_l: " << fHadKin.Pl() << "\t" << t << "\t"
-                  << fHadKin.Pl() - t + fInv.Q2() - SQ(m_h) +
-                                            2 * fHadKin.Nu() * fHadKin.Eh() /
-                                            2 / fHadKin.SqNuQ()
+        Double_t t = SQ(m_h) - fInv->Q2() + 2 *
+                            (fHadKin->SqNuQ() * fHadKin->Pl() -
+                             fHadKin->Nu() * fHadKin->Eh());
+        fKin->SetT(t);
+        std::cout << "    p_l: " << fHadKin->Pl() << "\t" << t << "\t"
+                  << fHadKin->Pl() - t + fInv->Q2() - SQ(m_h) +
+                                            2 * fHadKin->Nu() * fHadKin->Eh() /
+                                            2 / fHadKin->SqNuQ()
                   << std::endl;
     }
 
-    fInv.SetV12();
-    fHadKin.SetPx2();
+    fInv->SetV12();
+    fHadKin->SetPx2();
 
-    t_min = SQ(m_h) - fInv.Q2() + 2 *
-            (  fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
-    t_max = SQ(m_h) - fInv.Q2() + 2 *
-            (- fHadKin.SqNuQ() * fHadKin.Ph() - fHadKin.Nu() * fHadKin.Eh());
+    t_min = SQ(m_h) - fInv->Q2() + 2 *
+            (  fHadKin->SqNuQ() * fHadKin->Ph() - fHadKin->Nu() * fHadKin->Eh());
+    t_max = SQ(m_h) - fInv->Q2() + 2 *
+            (- fHadKin->SqNuQ() * fHadKin->Ph() - fHadKin->Nu() * fHadKin->Eh());
 
-    if ((fKin.T() - t_min) > kEpsMachine || fKin.T() < t_max) {
-        std::cout << "    t:     " << fKin.T()
+    if ((fKin->T() - t_min) > kEpsMachine || fKin->T() < t_max) {
+        std::cout << "    t:     " << fKin->T()
                   << "    t_min: " << t_min
                   << "    t_max: " << t_max
                   << std::endl;
         throw TKinematicException();
     }
-
-    SPhiH();
 }
 
 
@@ -379,13 +242,15 @@ void TRadCor::SPhiH(void)
 
     Double_t extai1 = TMath::Exp(fDeltas.Inf());
     sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac());
-}
 
-
-
-void TRadCor::BorninTest(Double_t& sigma_born)
-{
-
+    std::cout << std::endl;
+    std::cout.setf(std::ios::fixed);
+    std::cout << "    sib    " << std::setw(10)
+              << std::setprecision(7) << sigma_born * 1E-3
+              << "    sig    " << std::setw(10)
+              << std::setprecision(7) << (sig_obs + tai[0] + tai[1]) * 1E-3
+              << "    tail   " << std::setw(10)
+              << std::setprecision(7) << tai[1] * 1E-3 << std::endl;
 }
 
 
@@ -393,15 +258,15 @@ void TRadCor::BorninTest(Double_t& sigma_born)
 void TRadCor::qqt(Double_t tai[])
 {
     TQQTPhi qphi(this);
-    if (fConfig.IntegratePhiRad() == 1) {
+    if (fConfig->IntegratePhiRad() == 1) {
         ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kNONADAPTIVE);
         ig.SetFunction(qphi);
-        ig.SetRelTolerance(fConfig.EpsPhiR());
+        ig.SetRelTolerance(fConfig->EpsPhiR());
         ig.SetAbsTolerance(1E-18);
         tai[0] = ig.Integral(0, TMath::TwoPi());
-        tai[0] = N * kAlpha * tai[0] / SQ(kPi) / 4. / fInv.SqrtLq();
-    } else if (fConfig.IntegratePhiRad() == 0) {
-        tai[0] = N * kAlpha / kPi * qphi(0.) / 2 / fInv.SqrtLq();
+        tai[0] = N * kAlpha * tai[0] / SQ(kPi) / 4. / fInv->SqrtLq();
+    } else if (fConfig->IntegratePhiRad() == 0) {
+        tai[0] = N * kAlpha / kPi * qphi(0.) / 2 / fInv->SqrtLq();
     }
 
     std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
@@ -410,16 +275,16 @@ void TRadCor::qqt(Double_t tai[])
     Double_t tau[6];
     Double_t phi[4];
 
-    tau_1 = - fInv.Q2() / fInv.S();
-    tau_2 =   fInv.Q2() / fInv.X();
+    tau_1 = - fInv->Q2() / fInv->S();
+    tau_2 =   fInv->Q2() / fInv->X();
 
     phi[0] = 0.;
     phi[1] = 0.01 * kPi;
     phi[2] = 2. * kPi - 0.01 * kPi;
     phi[3] = 2. * kPi;
 
-    double tau_max = (fInv.Sx() + fInv.SqrtLq()) / (2. * SQ(M));
-    double tau_min = - fInv.Q2() / SQ(M) / tau_max;
+    double tau_max = (fInv->Sx() + fInv->SqrtLq()) / (2. * SQ(M));
+    double tau_min = - fInv->Q2() / SQ(M) / tau_max;
     tau[0] = tau_min;
     tau[1] = tau_1 - 0.15 * (tau_1 - tau_min);
     tau[2] = tau_1 + 0.15 * (tau_2 - tau_1);
@@ -464,6 +329,29 @@ void TRadCor::qqt(Double_t tai[])
         }
     }
 
-    tai[1] = - kAlpha / (64. * TMath::Power(kPi,5.) * fInv.SqrtLq() * M) * N * rere;
+    tai[1] = - kAlpha / (64. * TMath::Power(kPi,5.) * fInv->SqrtLq() * M) * N * rere;
     std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
+}
+
+
+
+void TRadCor::CreateVariables(Double_t E, Double_t x, Double_t Q2,
+                                  Double_t z, Double_t p_t, Double_t phi)
+{
+    fKin    = new TKinematicalVariables();
+    fInv    = new TLorentzInvariants(fConfig,fKin);
+    fHadKin = new THadronKinematics(fKin);
+
+    fKin->SetAll(x,-Q2,z,p_t,phi/kRadianDeg,E);
+    fInv->SetHadronKin(fHadKin);
+    fHadKin->SetInvariants(fInv);
+}
+
+
+
+void TRadCor::DeleteVariables(void)
+{
+    delete fKin;
+    delete fInv;
+    delete fHadKin;
 }
