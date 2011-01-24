@@ -20,8 +20,13 @@ INCLUDES  := -I..
 LIBS      := -L../slib -lTRadCor $(ROOTLIBS) -lMathMore $(CERNLIBS)
 
 ##############################################################################
-
 all: main_test
+
+tupla:Tuple_test.o
+	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
+
+Tuple_test.o:Tuple_test.cxx
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 main_test: main_test.o
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $@
@@ -30,4 +35,4 @@ main_test.o: main_test.cxx
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	@rm -rf main_test main_test.o
+	@rm -rf main_test main_test.o tupla tupla.o
