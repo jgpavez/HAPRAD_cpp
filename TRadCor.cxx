@@ -136,7 +136,7 @@ Double_t TRadCor::GetFactor1(void)
 
 Double_t TRadCor::GetFactor2(void)
 {
-    Double_t sigma_obs_f2 = sig_obs + tai[1];
+    Double_t sigma_obs_f2 = sig_obs + tai[0] + tai[1];
 
     return sigma_obs_f2 / sigma_born;
 }
