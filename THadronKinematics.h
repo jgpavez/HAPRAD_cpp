@@ -31,7 +31,6 @@ public:
     void    SetPx2(void);
 
     void    SetInvariants(const TLorentzInvariants* inv) { fInv = inv; };
-    void    Clear(void);
 
 private:
     const TKinematicalVariables*    fKin;

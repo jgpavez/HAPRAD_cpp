@@ -121,16 +121,3 @@ void THadronKinematics::SetPx2(void)
         throw TKinematicException();
     }
 }
-
-
-
-void THadronKinematics::Clear(void)
-{
-    fEh = 0;
-    fPl = 0;
-    fPt = 0;
-    fNu = 0;
-    fSqNuQ = 0;
-    fPx2 = 0;
-    fPh = 0;
-}

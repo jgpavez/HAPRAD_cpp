@@ -45,7 +45,6 @@ public:
     void    SetV12(void);
 
     void    SetHadronKin(const THadronKinematics* hadkin) { fHadKin = hadkin; }
-    void    Clear(void);
 
 private:
     const THapradConfig*            fConfig;

@@ -150,26 +150,3 @@ void TLorentzInvariants::SetV12(void)
     fV1 = (fS * fHadKin->Eh() - fSqrtLs * v1) / M;
     fV2 = (fX * fHadKin->Eh() - fSqrtLx * v2) / M;
 }
-
-
-
-void TLorentzInvariants::Clear(void)
-{
-    fS = 0;
-    fX = 0;
-    fSx = 0;
-    fSp = 0;
-    fQ2 = 0;
-    fW2 = 0;
-    fLambdaS = 0;
-    fLambdaX = 0;
-    fLambdaM = 0;
-    fLambdaQ = 0;
-    fSqrtLs = 0;
-    fSqrtLx = 0;
-    fSqrtLm = 0;
-    fSqrtLq = 0;
-    fV1 = 0;
-    fV2 = 0;
-    fY = 0;
-}
