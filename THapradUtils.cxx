@@ -7,8 +7,6 @@
 
 namespace HapradUtils {
 
-using namespace TMath;
-
 
 Double_t vacpol(const Double_t Q2)
 {
@@ -120,7 +118,7 @@ Double_t dfint(Int_t narg, double *arg, Int_t *nent, Double_t *ent, Double_t *ta
 
     for (int i = 1; i <= narg; ++i) {
         ncomb[i-1] = 1;
-        jb = ja - 1 +  nent[i-1]; // VERIFICAR SI LOS LIMITES ESTAN CORRECTOS!!!!
+        jb = ja - 1 +  nent[i-1];
 
         Int_t j = ja;
         while (j <= jb) {
