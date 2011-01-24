@@ -1,5 +1,4 @@
 #include "TLorentzInvariants.h"
-#include "TRadCor.h"
 #include "HapradErrors.h"
 #include "TGlobalConfig.h"
 #include "TKinematicalVariables.h"
@@ -10,12 +9,12 @@
 #include <iostream>
 
 
-TLorentzInvariants::TLorentzInvariants(const TRadCor* rc)
- : fS(0), fX(0), fSx(0), fSp(0), fQ2(0), fY(0)
+TLorentzInvariants::TLorentzInvariants(const TGlobalConfig* config,
+                                       const TKinematicalVariables* kin)
+ : fConfig(config), fKin(kin), fHadKin(0),
+   fS(0), fX(0), fSx(0), fSp(0), fQ2(0), fY(0)
 {
-    fConfig = rc->GetConfig();
-    fKin    = rc->GetKinematicalVariables();
-    fHadKin = rc->GetHadronKinematics();
+    // Do nothing
 }
 
 

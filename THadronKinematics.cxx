@@ -12,12 +12,11 @@
 #endif
 
 
-THadronKinematics::THadronKinematics(const TRadCor* rc)
- : fEh(0), fPl(0), fPt(0), fNu(0), fPx2(0), fPh(0)
+THadronKinematics::THadronKinematics(const TKinematicalVariables* kin)
+ : fKin(kin), fInv(0),
+   fEh(0), fPl(0), fPt(0), fNu(0), fPx2(0), fPh(0)
 {
-    fConfig = rc->GetConfig();
-    fKin    = rc->GetKinematicalVariables();
-    fInv    = rc->GetLorentzInvariants();
+    // Do nothing
 }
 
 

@@ -3,7 +3,6 @@
 
 #include "TROOT.h"
 
-class TRadCor;
 class TGlobalConfig;
 class TKinematicalVariables;
 class THadronKinematics;
@@ -11,7 +10,8 @@ class THadronKinematics;
 
 class TLorentzInvariants {
 public:
-    TLorentzInvariants(const TRadCor* rc);
+    TLorentzInvariants(const TGlobalConfig* config,
+                       const TKinematicalVariables* kin);
     ~TLorentzInvariants();
 
     // Getters
@@ -44,6 +44,7 @@ public:
     void    SetLambdas(void);
     void    SetV12(void);
 
+    void    SetHadronKin(const THadronKinematics* hadkin) { fHadKin = hadkin; }
     void    Clear(void);
 
 private:

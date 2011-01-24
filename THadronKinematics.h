@@ -3,15 +3,13 @@
 
 #include "TROOT.h"
 
-class TRadCor;
-class TGlobalConfig;
 class TKinematicalVariables;
 class TLorentzInvariants;
 
 
 class THadronKinematics {
 public:
-    THadronKinematics(const TRadCor* rc);
+    THadronKinematics(const TKinematicalVariables* kin);
     ~THadronKinematics();
 
     // Getters
@@ -32,10 +30,10 @@ public:
     void    SetMomentum(void);
     void    SetPx2(void);
 
+    void    SetInvariants(const TLorentzInvariants* inv) { fInv = inv; };
     void    Clear(void);
 
 private:
-    const TGlobalConfig*            fConfig;
     const TKinematicalVariables*    fKin;
     const TLorentzInvariants*       fInv;
 
