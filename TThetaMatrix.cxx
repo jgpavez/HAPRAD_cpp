@@ -77,13 +77,13 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     Double_t b11i;
 
     // Use simplified names
-    const Double_t& S  = fInv->S();
-    const Double_t& X  = fInv->X();
-    const Double_t& Sx = fInv->Sx();
-    const Double_t& Sp = fInv->Sp();
-    const Double_t& Q2 = fInv->Q2();
-    const Double_t& Lq = fInv->LambdaQ();
-    const Double_t& sqrtLq = fInv->SqrtLq();
+    const Double_t S  = fInv->S();
+    const Double_t X  = fInv->X();
+    const Double_t Sx = fInv->Sx();
+    const Double_t Sp = fInv->Sp();
+    const Double_t Q2 = fInv->Q2();
+    const Double_t Lq = fInv->LambdaQ();
+    const Double_t sqrtLq = fInv->SqrtLq();
 
     Double_t tau2 = SQ(tau);
 
