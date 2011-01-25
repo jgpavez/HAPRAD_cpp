@@ -10,9 +10,9 @@ class TLorentzInvariants;
 
 class THadronKinematics {
 public:
-    THadronKinematics(const THapradConfig* config,
-                      const TKinematicalVariables* kin,
-                      const TLorentzInvariants* inv);
+    THadronKinematics(THapradConfig* config,
+                      TKinematicalVariables* kin,
+                      TLorentzInvariants* inv);
     ~THadronKinematics();
 
     // Getters
@@ -37,9 +37,9 @@ public:
     void    SetV12(void);
 
 private:
-    const THapradConfig*            fConfig;
-    const TKinematicalVariables*    fKin;
-    const TLorentzInvariants*       fInv;
+    THapradConfig*            fConfig;
+    TKinematicalVariables*    fKin;
+    TLorentzInvariants*       fInv;
 
     Double_t    fEh;
     Double_t    fPl;

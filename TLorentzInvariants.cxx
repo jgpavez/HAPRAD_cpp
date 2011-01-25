@@ -10,10 +10,10 @@
 #include <iostream>
 
 
-TLorentzInvariants::TLorentzInvariants(const THapradConfig* config,
-                                       const TKinematicalVariables* kin)
+TLorentzInvariants::TLorentzInvariants(THapradConfig* config,
+                                       TKinematicalVariables* kin)
  : fConfig(config), fKin(kin), fHadKin(0),
-   fS(0), fX(0), fSx(0), fSp(0), fQ2(0), fY(0)
+   fS(0), fX(0), fSx(0), fSp(0), fQ2(0)
 {
     // Do nothing
 }
@@ -36,7 +36,7 @@ void TLorentzInvariants::SetS()
 
 void TLorentzInvariants::SetX()
 {
-    fX  = fS * (1 - fY);
+    fX  = fS * (1 - fKin->Y());
 }
 
 
@@ -57,12 +57,27 @@ void TLorentzInvariants::SetSp()
 
 void TLorentzInvariants::SetQ2()
 {
-    if (fKin->Y() >= 0.) {
-        fY = - fKin->Y();
-        fQ2 = fS * fKin->X() * fY;
+    Double_t Y;
+
+    if (fKin->Y() >= 0) {
+        Y = - fKin->Y();
+        fQ2 = fS * fKin->X() * Y;
     } else {
         fQ2 = - fKin->Y();
-        fY = fQ2 / (fS * fKin->X());
+        Y = fQ2 / (fS * fKin->X());
+    }
+
+    fKin->SetY(Y);
+
+    Double_t y_max = 1 / (1 + SQ(kMassProton) * fKin->X() / fS);
+    Double_t y_min = (kMassC2 - SQ(kMassProton)) / (fS * (1 - fKin->X()));
+
+    if (fKin->Y() > y_max || fKin->Y() < y_min ||
+                fKin->X() > 1 || fKin->X() < 0) {
+        std::cout << "    y: " << fKin->Y()
+                  << "    x: " << fKin->X()
+                  << std::endl;
+        throw TKinematicException();
     }
 }
 

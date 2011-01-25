@@ -186,22 +186,6 @@ void TRadCor::Initialization(void)
     fInv->SetS();
     fInv->SetQ2();
 
-    if (fKin->Y() < 0) {
-        Double_t y = fInv->Q2() / (fInv->S() * fKin->X());
-        fKin->SetY(y);
-    }
-
-    Double_t y_max = 1 / (1 + SQ(kMassProton) * fKin->X() / fInv->S());
-    Double_t y_min = (kMassC2 - SQ(kMassProton)) / (fInv->S() * (1 - fKin->X()));
-
-    if (fKin->Y() > y_max || fKin->Y() < y_min ||
-                fKin->X() > 1 || fKin->X() < 0) {
-        std::cout << "    y: " << fKin->Y()
-                  << "    x: " << fKin->X()
-                  << std::endl;
-        throw TKinematicException();
-    }
-
     fInv->SetX();
     fInv->SetSx();
     fInv->SetSp();
@@ -217,39 +201,16 @@ void TRadCor::Initialization(void)
     fHadKin->SetSqNuQ();
     fHadKin->SetMomentum();
 
-    if (fKin->T() >= 0.) {
+    if (fKin->T() >= 0) {
         if (fHadKin->Ph() > fHadKin->Pt()) {
             N = N * fInv->SqrtLq() / 2 / kMassProton / fHadKin->Pl();
         } else {
             N = 0;
         }
-
-        Double_t t = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
-                            (fHadKin->SqNuQ() * fHadKin->Pl() -
-                             fHadKin->Nu() * fHadKin->Eh());
-        fKin->SetT(t);
-        std::cout << "    p_l: " << fHadKin->Pl() << "\t" << t << "\t"
-                  << fHadKin->Pl() - t + fInv->Q2() - SQ(kMassDetectedHadron) +
-                                            2 * fHadKin->Nu() * fHadKin->Eh() /
-                                            2 / fHadKin->SqNuQ()
-                  << std::endl;
     }
 
     fHadKin->SetV12();
     fHadKin->SetPx2();
-
-    t_min = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
-            (  fHadKin->SqNuQ() * fHadKin->Ph() - fHadKin->Nu() * fHadKin->Eh());
-    t_max = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
-            (- fHadKin->SqNuQ() * fHadKin->Ph() - fHadKin->Nu() * fHadKin->Eh());
-
-    if ((fKin->T() - t_min) > kEpsMachine || fKin->T() < t_max) {
-        std::cout << "    t:     " << fKin->T()
-                  << "    t_min: " << t_min
-                  << "    t_max: " << t_max
-                  << std::endl;
-        throw TKinematicException();
-    }
 }
 
 

@@ -35,10 +35,6 @@ public:
     const THadronKinematics*        GetHadronKinematics(void) const { return fHadKin; };
 
 private:
-    void        CreateVariables(Double_t E, Double_t x, Double_t Q2,
-                                Double_t z, Double_t p_t, Double_t phi);
-    void        DeleteVariables(void);
-
     void        Initialization(void);
     void        SPhiH(void);
     void        qqt(Double_t tai[]);

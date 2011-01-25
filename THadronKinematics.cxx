@@ -10,9 +10,9 @@
 
 #include <iostream>
 
-THadronKinematics::THadronKinematics(const THapradConfig* config,
-                                     const TKinematicalVariables* kin,
-                                     const TLorentzInvariants* inv)
+THadronKinematics::THadronKinematics(THapradConfig* config,
+                                     TKinematicalVariables* kin,
+                                     TLorentzInvariants* inv)
  : fConfig(config), fKin(kin), fInv(inv),
    fEh(0), fPl(0), fPt(0), fNu(0), fPx2(0), fPh(0)
 {
@@ -57,7 +57,9 @@ void THadronKinematics::SetSqNuQ(void)
 
 void THadronKinematics::SetMomentum(void)
 {
-    fPh = TMath::Sqrt(SQ(fEh) - SQ(kMassDetectedHadron));
+    const Double_t m_h = kMassDetectedHadron;
+
+    fPh = TMath::Sqrt(SQ(fEh) - SQ(m_h));
 
     if (fKin->T() >= 0) {
         fPt = fKin->T();
@@ -70,17 +72,24 @@ void THadronKinematics::SetMomentum(void)
         }
 
         fPl = TMath::Sqrt(SQ(fPh) - SQ(fPt));
+
+        Double_t t = SQ(m_h) - fInv->Q2() +
+                2 * (fSqNuQ * fPl - fNu * fEh);
+        fKin->SetT(t);
+        std::cout << "    p_l: " << fPl << "\t" << t << "\t"
+                  << fPl - t + fInv->Q2() - SQ(m_h) + 2 * fNu * fEh / 2 / fSqNuQ
+                  << std::endl;
     } else {
-        fPl = (fKin->T() + fInv->Q2() - SQ(kMassDetectedHadron) +
+        fPl = (fKin->T() + fInv->Q2() - SQ(m_h) +
                 2 * fNu * fEh) / 2 / fSqNuQ;
 
         if (fPh < TMath::Abs(fPl)) {
             Double_t eps1, eps2, eps3, eps4, eps5, sum;
 
             eps1 = fKin->T() * kEpsMachine / fSqNuQ;
-            eps2 = 2 * SQ(kMassDetectedHadron)  * kEpsMachine / fSqNuQ;
+            eps2 = 2 * SQ(m_h)  * kEpsMachine / fSqNuQ;
             eps3 = 2 * fNu * fEh * kEpsMachine / fSqNuQ;
-            eps4 = fKin->T() + fInv->Q2() - SQ(kMassDetectedHadron) + 2 * fNu * fEh;
+            eps4 = fKin->T() + fInv->Q2() - SQ(m_h) + 2 * fNu * fEh;
             eps5 = eps4 / fSqNuQ * kEpsMachine;
 
             sum = SQ(eps1) + SQ(eps2) + 2 * SQ(eps3) + SQ(eps5);
@@ -102,6 +111,17 @@ void THadronKinematics::SetMomentum(void)
         }
 
         fPt = TMath::Sqrt(SQ(fPh) - SQ(fPl));
+    }
+
+    Double_t t_min = SQ(m_h) - fInv->Q2() + 2 * ( fSqNuQ * fPh - fNu * fEh);
+    Double_t t_max = SQ(m_h) - fInv->Q2() + 2 * (-fSqNuQ * fPh - fNu * fEh);
+
+    if ((fKin->T() - t_min) > kEpsMachine || fKin->T() < t_max) {
+        std::cout << "    t:     " << fKin->T()
+                  << "    t_min: " << t_min
+                  << "    t_max: " << t_max
+                  << std::endl;
+        throw TKinematicException();
     }
 }
 
