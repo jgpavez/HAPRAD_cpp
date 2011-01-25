@@ -3,13 +3,16 @@
 
 #include "TROOT.h"
 
+class THapradConfig;
 class TKinematicalVariables;
 class TLorentzInvariants;
 
 
 class THadronKinematics {
 public:
-    THadronKinematics(const TKinematicalVariables* kin);
+    THadronKinematics(const THapradConfig* config,
+                      const TKinematicalVariables* kin,
+                      const TLorentzInvariants* inv);
     ~THadronKinematics();
 
     // Getters
@@ -22,6 +25,8 @@ public:
 
     Double_t    Px2(void) const { return fPx2; };
     Double_t    Ph(void)  const { return fPh; };
+    Double_t    V1(void)  const { return fV1; };
+    Double_t    V2(void)  const { return fV2; };
 
     // Setters
     void    SetEh(void);
@@ -29,10 +34,12 @@ public:
     void    SetSqNuQ(void);
     void    SetMomentum(void);
     void    SetPx2(void);
+    void    SetV12(void);
 
     void    SetInvariants(const TLorentzInvariants* inv) { fInv = inv; };
 
 private:
+    const THapradConfig*            fConfig;
     const TKinematicalVariables*    fKin;
     const TLorentzInvariants*       fInv;
 
@@ -45,6 +52,9 @@ private:
 
     Double_t    fPx2;
     Double_t    fPh;
+
+    Double_t    fV1;
+    Double_t    fV2;
 };
 
 #endif

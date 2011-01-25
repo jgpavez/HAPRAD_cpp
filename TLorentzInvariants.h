@@ -21,8 +21,6 @@ public:
     Double_t    Sp(void)  const { return fSp; };
     Double_t    Q2(void)  const { return fQ2; };
     Double_t    W2(void)  const { return fW2; };
-    Double_t    V1(void)  const { return fV1; };
-    Double_t    V2(void)  const { return fV2; };
 
     Double_t    LambdaS(void) const { return fLambdaS; };
     Double_t    LambdaX(void) const { return fLambdaX; };
@@ -42,7 +40,6 @@ public:
     void    SetQ2(void);
     void    SetW2(void);
     void    SetLambdas(void);
-    void    SetV12(void);
 
     void    SetHadronKin(const THadronKinematics* hadkin) { fHadKin = hadkin; }
 
@@ -67,9 +64,6 @@ private:
     Double_t    fSqrtLx;
     Double_t    fSqrtLm;
     Double_t    fSqrtLq;
-
-    Double_t    fV1;
-    Double_t    fV2;
 
     Double_t    fY;
 };

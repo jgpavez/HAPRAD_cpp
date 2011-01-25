@@ -230,7 +230,7 @@ void TRadCor::Initialization(void)
                   << std::endl;
     }
 
-    fInv->SetV12();
+    fHadKin->SetV12();
     fHadKin->SetPx2();
 
     t_min = SQ(kMassDetectedHadron) - fInv->Q2() + 2 *
@@ -365,7 +365,7 @@ void TRadCor::CreateVariables(Double_t E, Double_t x, Double_t Q2,
 {
     fKin    = new TKinematicalVariables();
     fInv    = new TLorentzInvariants(fConfig,fKin);
-    fHadKin = new THadronKinematics(fKin);
+    fHadKin = new THadronKinematics(fConfig,fKin,fInv);
 
     fKin->SetAll(x,-Q2,z,p_t,phi/kRadianDeg,E);
     fInv->SetHadronKin(fHadKin);

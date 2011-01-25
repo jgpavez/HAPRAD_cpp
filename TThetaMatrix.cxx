@@ -147,8 +147,8 @@ void TThetaMatrix::Evaluate(Double_t tau, Double_t mu,
     }
 
     const Double_t& zh = fKin->Z();
-    const Double_t& V1 = fInv->V1();
-    const Double_t& V2 = fInv->V2();
+    const Double_t& V1 = fHadKin->V1();
+    const Double_t& V2 = fHadKin->V2();
 
     Double_t hi2 = bis - (Q2 + 2 * m2) * bi12;
     Double_t vvp = (V1 + V2) / 2.;

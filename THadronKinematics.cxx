@@ -1,19 +1,19 @@
 #include "THadronKinematics.h"
 #include "TRadCor.h"
+#include "THapradConfig.h"
+#include "TLorentzInvariants.h"
 #include "TKinematicalVariables.h"
 #include "THapradException.h"
-#include "TLorentzInvariants.h"
+#include "HapradErrors.h"
 #include "haprad_constants.h"
 #include "square_power.h"
 
 #include <iostream>
-#ifdef DEBUG
-#include <iomanip>
-#endif
 
-
-THadronKinematics::THadronKinematics(const TKinematicalVariables* kin)
- : fKin(kin), fInv(0),
+THadronKinematics::THadronKinematics(const THapradConfig* config,
+                                     const TKinematicalVariables* kin,
+                                     const TLorentzInvariants* inv)
+ : fConfig(config), fKin(kin), fInv(inv),
    fEh(0), fPl(0), fPt(0), fNu(0), fPx2(0), fPh(0)
 {
     // Do nothing
@@ -120,4 +120,60 @@ void THadronKinematics::SetPx2(void)
                   << std::endl;
         throw TKinematicException();
     }
+}
+
+
+
+void THadronKinematics::SetV12(void)
+{
+    using namespace TMath;
+
+    Double_t M = kMassProton;
+    Double_t m;
+
+    switch(fConfig->PolarizationType()) {
+        case 1:
+            m = kMassElectron;
+            break;
+        case 2:
+            m = kMassMuon;
+            break;
+        default:
+            m = kMassElectron;
+    }
+
+    Double_t costs, costx, sints, sintx;
+    Double_t lambda;
+
+    // Just use short names to make formulas clear
+    const Double_t S  = fInv->S();
+    const Double_t X  = fInv->X();
+    const Double_t Q2 = fInv->Q2();
+
+    const Double_t SqrtLs = fInv->SqrtLs();
+    const Double_t SqrtLx = fInv->SqrtLx();
+    const Double_t SqrtLq = fInv->SqrtLq();
+
+
+    costs = (S * (S - X) + 2 * SQ(M) * Q2) / SqrtLs / SqrtLq;
+    costx = (X * (S - X) - 2 * SQ(M) * Q2) / SqrtLx / SqrtLq;
+
+    lambda = S * X * Q2 - SQ(M) * SQ(Q2) - SQ(m) * fInv->LambdaQ();
+
+    if (lambda > 0) {
+        sints = 2 * M * Sqrt(lambda) / SqrtLs / SqrtLq;
+        sintx = 2 * M * Sqrt(lambda) / SqrtLx / SqrtLq;
+    } else {
+        HAPRAD_WARN_MSG("sphi", "sints = NaN");
+        HAPRAD_WARN_MSG("sphi", "sintx = NaN");
+        sints = 0;
+        sintx = 0;
+    }
+
+    Double_t v1, v2;
+    v1 = costs * fPl + sints * fPt * Cos(fKin->PhiH());
+    v2 = costx * fPl + sintx * fPt * Cos(fKin->PhiH());
+
+    fV1 = (fInv->S() * fEh - SqrtLs * v1) / M;
+    fV2 = (fInv->X() * fEh - SqrtLx * v2) / M;
 }

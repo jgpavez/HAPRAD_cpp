@@ -6,6 +6,7 @@
 #include "THapradException.h"
 #include "haprad_constants.h"
 #include "square_power.h"
+
 #include <iostream>
 
 
@@ -103,50 +104,4 @@ void TLorentzInvariants::SetLambdas()
     fSqrtLs = TMath::Sqrt(TMath::Max(0.,fLambdaS));
     fSqrtLq = TMath::Sqrt(TMath::Max(0.,fLambdaQ));
     fSqrtLx = TMath::Sqrt(TMath::Max(0.,fLambdaX));
-}
-
-
-
-void TLorentzInvariants::SetV12(void)
-{
-    using namespace TMath;
-
-    Double_t M = kMassProton;
-    Double_t m;
-
-    switch(fConfig->PolarizationType()) {
-        case 1:
-            m = kMassElectron;
-            break;
-        case 2:
-            m = kMassMuon;
-            break;
-        default:
-            m = kMassElectron;
-    }
-
-    Double_t costs, costx, sints, sintx;
-    Double_t lambda;
-
-    costs = (fS * (fS - fX) + 2 * SQ(M) * fQ2) / fSqrtLs / fSqrtLq;
-    costx = (fX * (fS - fX) - 2 * SQ(M) * fQ2) / fSqrtLx / fSqrtLq;
-
-    lambda = fS * fX * fQ2 - SQ(M) * SQ(fQ2) - SQ(m) * fLambdaQ;
-
-    if (lambda > 0) {
-        sints = 2 * M * Sqrt(lambda) / fSqrtLs / fSqrtLq;
-        sintx = 2 * M * Sqrt(lambda) / fSqrtLx / fSqrtLq;
-    } else {
-        HAPRAD_WARN_MSG("sphi", "sints = NaN");
-        HAPRAD_WARN_MSG("sphi", "sintx = NaN");
-        sints = 0;
-        sintx = 0;
-    }
-
-    Double_t v1, v2;
-    v1 = costs * fHadKin->Pl() + sints * fHadKin->Pt() * Cos(fKin->PhiH());
-    v2 = costx * fHadKin->Pl() + sintx * fHadKin->Pt() * Cos(fKin->PhiH());
-
-    fV1 = (fS * fHadKin->Eh() - fSqrtLs * v1) / M;
-    fV2 = (fX * fHadKin->Eh() - fSqrtLx * v2) / M;
 }
