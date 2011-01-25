@@ -186,6 +186,7 @@ void TRadCor::Initialization(void)
     fInv->Evaluate();
     fHadKin->Evaluate();
 
+    // Calculate normalization factor
     N = kBarn * (kPi * SQ(kAlpha) * fKin->Y() * fInv->Sx() * kMassProton) /
                 (2 * fInv->SqrtLq());
 
@@ -205,21 +206,32 @@ void TRadCor::SPhiH(void)
     TDelta fDeltas(this);
     fDeltas.Evaluate();
 
+    // Calculate Born cross-section
     std::cout << "********** ita: " << 1 << " *********" << std::endl;
 
     TBorn fBornin(this);
     sigma_born = N * fBornin.Evaluate();
-
     std::cout << "sib: " << sigma_born << std::endl;
+
+    // Calculate radiative tail contribution
     if (sigma_born == 0.0) {
         tai[0] = 0.;
+    } else {
+        tai[0] = N * RadiativeTail();
     }
+    std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
 
-    qqt(tai); // fix this
+    // Calculate exclusive radiative tail calculation
+    std::cout << "********** ita: " << 2 << " *********" << std::endl;
 
+    tai[1] = N * ExclusiveRadiativeTail();
+    std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
+
+    // Calculate observed cross-section without tail contribution
     Double_t extai1 = TMath::Exp(fDeltas.Inf());
-    sig_obs = sigma_born * extai1 * (1. + fDeltas.VR() + fDeltas.Vac());
+    sig_obs = sigma_born * extai1 * (1 + fDeltas.VR() + fDeltas.Vac());
 
+    // Print results (as original FORTRAN code does)
     std::cout << std::endl;
     std::cout.setf(std::ios::fixed);
     std::cout << "    sib    " << std::setw(10)
@@ -232,21 +244,31 @@ void TRadCor::SPhiH(void)
 
 
 
-void TRadCor::qqt(Double_t tai[])
+Double_t TRadCor::RadiativeTail(void)
 {
+    Double_t result = 0;
+
     TQQTPhi qphi(this);
+
     if (fConfig->IntegratePhiRad() == 1) {
         ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kNONADAPTIVE);
         ig.SetFunction(qphi);
         ig.SetRelTolerance(fConfig->EpsPhiR());
         ig.SetAbsTolerance(1E-18);
-        tai[0] = ig.Integral(0, TMath::TwoPi());
-        tai[0] = N * kAlpha * tai[0] / SQ(kPi) / 4. / fInv->SqrtLq();
+        result = ig.Integral(0, TMath::TwoPi());
+        result = kAlpha * result / SQ(kPi) / 4. / fInv->SqrtLq();
     } else if (fConfig->IntegratePhiRad() == 0) {
-        tai[0] = N * kAlpha / kPi * qphi(0.) / 2 / fInv->SqrtLq();
+        result = kAlpha / kPi * qphi(0.) / 2 / fInv->SqrtLq();
     }
 
-    std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
+    return result;
+}
+
+
+
+Double_t TRadCor::ExclusiveRadiativeTail(void)
+{
+    Double_t result = 0;
 
     Double_t tau_1, tau_2;
     Double_t tau[6];
@@ -268,8 +290,6 @@ void TRadCor::qqt(Double_t tai[])
     tau[3] = tau_2 - 0.15 * (tau_2 - tau_1);
     tau[4] = tau_2 + 0.15 * (tau_max - tau_2);
     tau[5] = tau_max;
-
-    std::cout << "********** ita: " << 2 << " *********" << std::endl;
 
     ROOT::Math::GSLMCIntegrator ig(ROOT::Math::IntegrationMultiDim::kMISER,
                                    1E-6,
@@ -306,7 +326,8 @@ void TRadCor::qqt(Double_t tai[])
         }
     }
 
-    tai[1] = - kAlpha * N * rere /
-                (64 * TMath::Power(kPi,5.) * fInv->SqrtLq() * kMassProton);
-    std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
+    Double_t d = 64 * TMath::Power(kPi,5.) * fInv->SqrtLq() * kMassProton;
+    result = - kAlpha * rere / d;
+
+    return result;
 }

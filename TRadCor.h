@@ -37,7 +37,9 @@ public:
 private:
     void        Initialization(void);
     void        SPhiH(void);
-    void        qqt(Double_t tai[]);
+    Double_t    RadiativeTail(void);
+    Double_t    ExclusiveRadiativeTail(void);
+
 
     THapradConfig*          fConfig;
     TKinematicalVariables*  fKin;
