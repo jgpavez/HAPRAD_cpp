@@ -41,8 +41,6 @@ public:
     void    SetW2(void);
     void    SetLambdas(void);
 
-    void    SetHadronKin(const THadronKinematics* hadkin) { fHadKin = hadkin; }
-
 private:
     const THapradConfig*            fConfig;
     const TKinematicalVariables*    fKin;

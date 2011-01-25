@@ -94,7 +94,10 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     // section of hadron electroproduction, and maxMx2 is the maximum amount
     // of missing mass.
 
-    CreateVariables(E,x,Q2,z,p_t,phi);
+    fKin    = new TKinematicalVariables(x,-Q2,z,p_t,phi/kRadianDeg,E);
+    fInv    = new TLorentzInvariants(fConfig,fKin);
+    fHadKin = new THadronKinematics(fConfig,fKin,fInv);
+
     rc = 0;
 
     Double_t S_x = - fKin->Y() / fKin->X();
@@ -112,7 +115,9 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
         std::cerr << wrongKin.what() << std::endl;
     }
 
-    DeleteVariables();
+    delete fKin;
+    delete fInv;
+    delete fHadKin;
 }
 
 
@@ -356,27 +361,4 @@ void TRadCor::qqt(Double_t tai[])
     tai[1] = - kAlpha * N * rere /
                 (64 * TMath::Power(kPi,5.) * fInv->SqrtLq() * kMassProton);
     std::cout << "tai[" << 1 << "]\t"  << tai[1] << std::endl;
-}
-
-
-
-void TRadCor::CreateVariables(Double_t E, Double_t x, Double_t Q2,
-                                  Double_t z, Double_t p_t, Double_t phi)
-{
-    fKin    = new TKinematicalVariables();
-    fInv    = new TLorentzInvariants(fConfig,fKin);
-    fHadKin = new THadronKinematics(fConfig,fKin,fInv);
-
-    fKin->SetAll(x,-Q2,z,p_t,phi/kRadianDeg,E);
-    fInv->SetHadronKin(fHadKin);
-    fHadKin->SetInvariants(fInv);
-}
-
-
-
-void TRadCor::DeleteVariables(void)
-{
-    delete fKin;
-    delete fInv;
-    delete fHadKin;
 }

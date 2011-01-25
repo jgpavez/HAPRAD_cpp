@@ -36,8 +36,6 @@ public:
     void    SetPx2(void);
     void    SetV12(void);
 
-    void    SetInvariants(const TLorentzInvariants* inv) { fInv = inv; };
-
 private:
     const THapradConfig*            fConfig;
     const TKinematicalVariables*    fKin;
