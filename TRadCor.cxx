@@ -98,8 +98,6 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     fInv    = new TLorentzInvariants(fConfig,fKin);
     fHadKin = new THadronKinematics(fConfig,fKin,fInv);
 
-    rc = 0;
-
     Double_t S_x = - fKin->Y() / fKin->X();
     Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + fKin->T();
 
@@ -107,9 +105,6 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
         if (Mx2 > maxMx2) {
             Initialization();
             SPhiH();
-
-            sig_obs += tai[0] + tai[1];
-            rc = sig_obs / sigma_born;
         }
     } catch (TKinematicException& wrongKin) {
         std::cerr << wrongKin.what() << std::endl;
@@ -136,7 +131,12 @@ Double_t TRadCor::GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
     // section of hadron electroproduction, and maxMx2 is the maximum amount of
     // missing mass.
 
+    rc = 0;
+
     CalculateRCFactor(E,x,Q2,z,p_t,phi,maxMx2);
+
+    rc = (sig_obs + tai[0] + tai[1]) / sigma_born;
+
     return rc;
 }
 
