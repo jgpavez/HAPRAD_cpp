@@ -27,6 +27,21 @@ TLorentzInvariants::~TLorentzInvariants()
 
 
 
+void TLorentzInvariants::Evaluate(void)
+{
+    // Evaluate all variables.
+
+    SetS();
+    SetQ2();
+    SetX();
+    SetSx();
+    SetSp();
+    SetW2();
+    SetLambdas();
+}
+
+
+
 void TLorentzInvariants::SetS()
 {
     fS = 2 * kMassProton * fKin->E();

@@ -28,7 +28,10 @@ public:
     Double_t    V1(void)  const { return fV1; };
     Double_t    V2(void)  const { return fV2; };
 
-    // Setters
+    // Setter
+    void        Evaluate(void);
+
+private:
     void    SetEh(void);
     void    SetNu(void);
     void    SetSqNuQ(void);
@@ -36,7 +39,7 @@ public:
     void    SetPx2(void);
     void    SetV12(void);
 
-private:
+
     THapradConfig*            fConfig;
     TKinematicalVariables*    fKin;
     TLorentzInvariants*       fInv;

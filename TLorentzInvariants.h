@@ -32,7 +32,10 @@ public:
     Double_t    SqrtLm(void) const { return fSqrtLm; };
     Double_t    SqrtLq(void) const { return fSqrtLq; };
 
-    // Setters
+    // Setter
+    void        Evaluate(void);
+
+private:
     void    SetS(void);
     void    SetX(void);
     void    SetSx(void);
@@ -41,7 +44,7 @@ public:
     void    SetW2(void);
     void    SetLambdas(void);
 
-private:
+
     THapradConfig*            fConfig;
     TKinematicalVariables*    fKin;
     THadronKinematics*        fHadKin;

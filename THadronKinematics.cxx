@@ -28,6 +28,20 @@ THadronKinematics::~THadronKinematics()
 
 
 
+void THadronKinematics::Evaluate(void)
+{
+    // Evaluate all variables.
+
+    SetNu();
+    SetEh();
+    SetSqNuQ();
+    SetMomentum();
+    SetV12();
+    SetPx2();
+}
+
+
+
 void THadronKinematics::SetNu(void)
 {
     fNu = fInv->Sx() / (2 * kMassProton);

@@ -183,23 +183,11 @@ Double_t TRadCor::GetFactor3(void)
 
 void TRadCor::Initialization(void)
 {
-    fInv->SetS();
-    fInv->SetQ2();
-
-    fInv->SetX();
-    fInv->SetSx();
-    fInv->SetSp();
-    fInv->SetW2();
-    fInv->SetLambdas();
-
-    fHadKin->SetNu();
+    fInv->Evaluate();
+    fHadKin->Evaluate();
 
     N = kBarn * (kPi * SQ(kAlpha) * fKin->Y() * fInv->Sx() * kMassProton) /
                 (2 * fInv->SqrtLq());
-
-    fHadKin->SetEh();
-    fHadKin->SetSqNuQ();
-    fHadKin->SetMomentum();
 
     if (fKin->T() >= 0) {
         if (fHadKin->Ph() > fHadKin->Pt()) {
@@ -208,9 +196,6 @@ void TRadCor::Initialization(void)
             N = 0;
         }
     }
-
-    fHadKin->SetV12();
-    fHadKin->SetPx2();
 }
 
 
