@@ -12,8 +12,9 @@ class THadronKinematics;
 class TBorn {
 public:
     TBorn(const TRadCor* rc);
+    ~TBorn();
 
-    Double_t GetValue(Double_t N);
+    Double_t        Evaluate(void);
 
 private:
     const TKinematicalVariables*    fKin;
@@ -21,7 +22,8 @@ private:
     const THadronKinematics*        fHadKin;
 
     TStructFunctionArray fH;
-    Double_t fThetaB[4];
+
+    Double_t    fThetaB[4];
 };
 
 #endif

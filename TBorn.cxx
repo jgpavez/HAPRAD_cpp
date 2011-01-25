@@ -19,14 +19,21 @@ TBorn::TBorn(const TRadCor* rc)
 
     fThetaB[0] = fInv->Q2();
     fThetaB[1] = (fInv->S() * fInv->X() - SQ(M) * fInv->Q2()) / 2.;
-    fThetaB[2] = (fHadKin->V1() * fHadKin->V2() - SQ(m_h) * fInv->Q2()) / 2.;
+    fThetaB[2] = (fHadKin->V1() * fHadKin->V2() - SQ(m_h) * fInv->Q2()) / 2;
     fThetaB[3] = (fHadKin->V2() * fInv->S() + fHadKin->V1() * fInv->X() -
-                            fKin->Z() * fInv->Q2() * fInv->Sx()) / 2.;
+                            fKin->Z() * fInv->Q2() * fInv->Sx()) / 2;
 }
 
 
 
-Double_t TBorn::GetValue(Double_t N)
+TBorn::~TBorn()
+{
+
+}
+
+
+
+Double_t TBorn::Evaluate(void)
 {
     fH.Evaluate(0.,0.,0.);
 
@@ -35,5 +42,5 @@ Double_t TBorn::GetValue(Double_t N)
         sum = sum + fThetaB[i] * fH(i);
     }
 
-    return sum * N / fInv->Q2() / fInv->Q2() * 2.;
+    return 2 * sum / SQ(fInv->Q2()) ;
 }

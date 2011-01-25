@@ -206,8 +206,10 @@ void TRadCor::SPhiH(void)
     fDeltas.Evaluate();
 
     std::cout << "********** ita: " << 1 << " *********" << std::endl;
+
     TBorn fBornin(this);
-    sigma_born = fBornin.GetValue(N);
+    sigma_born = N * fBornin.Evaluate();
+
     std::cout << "sib: " << sigma_born << std::endl;
     if (sigma_born == 0.0) {
         tai[0] = 0.;
