@@ -59,6 +59,9 @@ private:
     // Integration
     Double_t     N;                // Normalization factor
     Int_t        ita;
+
+    // Kinematical error or not
+    Bool_t      fKinError;
 };
 
 #endif

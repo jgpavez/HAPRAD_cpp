@@ -101,12 +101,15 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     Double_t S_x = - fKin->Y() / fKin->X();
     Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + fKin->T();
 
+    fKinError = false;
+
     try {
         if (Mx2 > maxMx2) {
             Initialization();
             SPhiH();
         }
     } catch (TKinematicException& wrongKin) {
+        fKinError = true;
         std::cerr << wrongKin.what() << std::endl;
     }
 
@@ -131,13 +134,12 @@ Double_t TRadCor::GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
     // section of hadron electroproduction, and maxMx2 is the maximum amount of
     // missing mass.
 
-    rc = 0;
-
     CalculateRCFactor(E,x,Q2,z,p_t,phi,maxMx2);
 
-    rc = (sig_obs + tai[0] + tai[1]) / sigma_born;
-
-    return rc;
+    if (fKinError)
+        return 0;
+    else
+        return (sig_obs + tai[0] + tai[1]) / sigma_born;
 }
 
 
@@ -147,9 +149,13 @@ Double_t TRadCor::GetFactor1(void)
     // Return the radiative correction factor without the exclusive radiative
     // tail contribution. You need to call CalculateRCFactor(...) first.
 
-    Double_t sigma_obs_f1 = sig_obs + tai[0];
+    if (fKinError) {
+        return 0;
+    } else {
+        Double_t sigma_obs_f1 = sig_obs + tai[0];
 
-    return sigma_obs_f1 / sigma_born;
+        return sigma_obs_f1 / sigma_born;
+    }
 }
 
 
@@ -161,9 +167,13 @@ Double_t TRadCor::GetFactor2(void)
     //
     // This is the default value, returned by GetRCFactor(...).
 
-    Double_t sigma_obs_f2 = sig_obs + tai[0] + tai[1];
+    if (fKinError) {
+        return 0;
+    } else {
+        Double_t sigma_obs_f2 = sig_obs + tai[0] + tai[1];
 
-    return sigma_obs_f2 / sigma_born;
+        return sigma_obs_f2 / sigma_born;
+    }
 }
 
 
@@ -174,9 +184,13 @@ Double_t TRadCor::GetFactor3(void)
     // tail contribution divided by 2. You need to call CalculateRCFactor(...)
     // first.
 
-    Double_t sigma_obs_f3 = sig_obs + tai[0] + tai[1] / 2;
+    if (fKinError) {
+        return 0;
+    } else {
+        Double_t sigma_obs_f3 = sig_obs + tai[0] + tai[1] / 2;
 
-    return sigma_obs_f3 / sigma_born;
+        return sigma_obs_f3 / sigma_born;
+    }
 }
 
 
