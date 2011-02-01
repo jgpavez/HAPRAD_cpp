@@ -42,8 +42,8 @@ void TDelta::Evaluate(void)
             m = kMassElectron;
     }
 
-    Double_t S_ = fInv->S() - fInv->Q2() - fHadKin->V1();
-    Double_t X_ = fInv->X() + fInv->Q2() - fHadKin->V2();
+    Double_t S_ = fInv->X() + fInv->Q2() - fHadKin->V2();
+    Double_t X_ = fInv->S() - fInv->Q2() - fHadKin->V1();
 
     Double_t l_m  = TMath::Log(fInv->Q2() / SQ(m));
     Double_t Li_2 = HapradUtils::fspen(1 - fHadKin->Px2() * fInv->Q2() / (S_ * X_));
