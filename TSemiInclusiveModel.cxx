@@ -1,8 +1,10 @@
 #include "TSemiInclusiveModel.h"
 #include "TMath.h"
 #include "Partons.h"
+#include "ConfigFile.h"
 #include "haprad_constants.h"
 #include "square_power.h"
+#include <iostream>
 
 /*
  *This C extern declaration is used for calling the pdf libraries
@@ -40,17 +42,21 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
     static Double_t A1, B1, C1, D1, E1;
 
     if (nc == 1) {
-        Double_t  par0  =   1.07049e-01;
-        Double_t  par1  =   1.44052e+00;
-        Double_t  par2  =  -1.37651e+00;
-        Double_t  par3  =  -3.70841e-01;
-        Double_t  par4  =   6.24209e-01;
+        ConfigFile parameters("parameters");
 
-        Double_t  A1    =   8.66764e-02;
-        Double_t  B1    =   6.02301e-01;
-        Double_t  C1    =  -3.76230e-01;
-        Double_t  D1    =  -2.42141e-01;
-        Double_t  E1    =   3.98611e-01;
+        std::cout << "   Reading parameters from configuration file..."
+                    << std::endl;
+        parameters.readInto(par0, "par0");
+        parameters.readInto(par1, "par1");
+        parameters.readInto(par2, "par2");
+        parameters.readInto(par3, "par3");
+        parameters.readInto(par4, "par4");
+
+        parameters.readInto(A1, "A1");
+        parameters.readInto(B1, "B1");
+        parameters.readInto(C1, "C1");
+        parameters.readInto(D1, "D1");
+        parameters.readInto(E1, "E1");
     }
 
     Double_t GTMD, SCALE, UPV, DNV, USEA, DSEA, STR, CHM, BOT, TOP, XD, GL;

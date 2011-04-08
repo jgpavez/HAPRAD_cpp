@@ -12,6 +12,7 @@
 #include "square_power.h"
 #include "Math/GSLIntegrator.h"
 #include "Math/GSLMCIntegrator.h"
+#include "ConfigFile.h"
 #include <iostream>
 #include <iomanip>
 
@@ -102,6 +103,7 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + fKin->T();
 
     fKinError = false;
+    fParametersError = false;
 
     try {
         if (Mx2 > maxMx2) {
@@ -111,6 +113,24 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     } catch (TKinematicException& wrongKin) {
         fKinError = true;
         std::cerr << wrongKin.what() << std::endl;
+    } catch (ConfigFile::file_not_found) {
+        fParametersError = true;
+        std::cout << std::endl
+                  << "File with parameters not found. Please create a "
+                  << "file named 'parameters'" << std::endl
+                  << "in the same directory of your executable "
+                  << "with this format:" << std::endl
+                  << std::endl
+                  << "     parameter1 = value" << std::endl
+                  << "     parameter2 = value" << std::endl
+                  << "     parameter2 = value" << std::endl
+                  << "               ..." << std::endl
+                  << std::endl
+                  << "The parameters you should put in the file are:" << std::endl
+                  << std::endl
+                  << "    par0, par1, par2, par3, par4," << std::endl
+                  << "    A1, B1, C1, D1, E1" << std::endl
+                  << std::endl;
     }
 
     delete fKin;
@@ -136,7 +156,7 @@ Double_t TRadCor::GetRCFactor(Double_t E, Double_t x, Double_t Q2, Double_t z,
 
     CalculateRCFactor(E,x,Q2,z,p_t,phi,maxMx2);
 
-    if (fKinError)
+    if (fKinError || fParametersError)
         return 0;
     else
         return (sig_obs + tai[0] + tai[1]) / sigma_born;
@@ -149,7 +169,7 @@ Double_t TRadCor::GetFactor1(void)
     // Return the radiative correction factor without the exclusive radiative
     // tail contribution. You need to call CalculateRCFactor(...) first.
 
-    if (fKinError) {
+    if (fKinError || fParametersError) {
         return 0;
     } else {
         Double_t sigma_obs_f1 = sig_obs + tai[0];
@@ -167,7 +187,7 @@ Double_t TRadCor::GetFactor2(void)
     //
     // This is the default value, returned by GetRCFactor(...).
 
-    if (fKinError) {
+    if (fKinError || fParametersError) {
         return 0;
     } else {
         Double_t sigma_obs_f2 = sig_obs + tai[0] + tai[1];
@@ -184,7 +204,7 @@ Double_t TRadCor::GetFactor3(void)
     // tail contribution divided by 2. You need to call CalculateRCFactor(...)
     // first.
 
-    if (fKinError) {
+    if (fKinError || fParametersError) {
         return 0;
     } else {
         Double_t sigma_obs_f3 = sig_obs + tai[0] + tai[1] / 2;
@@ -233,6 +253,7 @@ void TRadCor::SPhiH(void)
     } else {
         tai[0] = N * RadiativeTail();
     }
+
     std::cout << "tai[" << 0 << "]\t"  << tai[0] << std::endl;
 
     // Calculate exclusive radiative tail calculation

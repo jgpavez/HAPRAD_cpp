@@ -62,6 +62,9 @@ private:
 
     // Kinematical error or not
     Bool_t      fKinError;
+
+    // File with parameters found or not
+    Bool_t      fParametersError;
 };
 
 #endif
