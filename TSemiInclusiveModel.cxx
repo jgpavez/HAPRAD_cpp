@@ -33,12 +33,25 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
 {
     using namespace TMath;
 
-    Double_t ac =   1.2025E-10;
-    Double_t bc =  -5.2703E-2;
-    Double_t cc =   3.7467E-1;
-    Double_t dc =   6.5397E-2;
-    Double_t ec =  -2.2136E-1;
-    Double_t fc =  -1.0621E-1;
+    static Int_t nc = 0;
+    nc++;
+
+    static Double_t par0, par1, par2, par3, par4;
+    static Double_t A1, B1, C1, D1, E1;
+
+    if (nc == 1) {
+        Double_t  par0  =   1.07049e-01;
+        Double_t  par1  =   1.44052e+00;
+        Double_t  par2  =  -1.37651e+00;
+        Double_t  par3  =  -3.70841e-01;
+        Double_t  par4  =   6.24209e-01;
+
+        Double_t  A1    =   8.66764e-02;
+        Double_t  B1    =   6.02301e-01;
+        Double_t  C1    =  -3.76230e-01;
+        Double_t  D1    =  -2.42141e-01;
+        Double_t  E1    =   3.98611e-01;
+    }
 
     Double_t GTMD, SCALE, UPV, DNV, USEA, DSEA, STR, CHM, BOT, TOP, XD, GL;
 
@@ -54,9 +67,6 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
     Int_t SPDF      =   5;
     Int_t ISET      =   1;
     Int_t ICHARGE   =   1;
-
-    static Int_t nc = 0;
-    nc++;
 
     if (nc == 1) init_pdf_(&GPDF, &SPDF);
 
@@ -85,15 +95,13 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
 
     exec_pkhff_(&ISET, &ICHARGE, &ZD, &Q2D, uff, dff, sff, cff, bff, gff);
 
-    Double_t sgmpt = ac + bc * X + cc * Z + dc * SQ(X) + ec * SQ(Z) + fc * X * Z;
+    Double_t meanpt = par0 + par1 * Z + par2 * Z * Z + par3 * X + par4 * X * X;
+    Double_t sgmpt  = A1 + B1 * Z + C1 * Z * Z + D1 * X + E1 * X * X;
 
     if (sgmpt < 0.02) sgmpt = 0.02;
     if (sgmpt > 0.15) sgmpt = 0.15;
 
-    if (pl > 0.15)
-        GTMD  = Exp(-pt2 / (2.*sgmpt)) / (2.* kPi * sgmpt);
-    else
-        GTMD  = Exp(-(pt2 + 2.*SQ(pl)) / (2.*sgmpt)) / (2.* kPi * sgmpt);
+    GTMD = Exp(-SQ(Sqrt(pt2) - meanpt) / (2 * sgmpt)) / (2 * Pi() * sgmpt);
 
     if (mx2 < SQ(kMassProton + kMassPion)) return;
 
