@@ -6,6 +6,12 @@
 #include "square_power.h"
 #include <iostream>
 
+#include "TSystem.h"
+#include "TROOT.h"
+#include "TFile.h"
+#include "TNtuple.h"
+#include "THn.h"
+
 /*
  *This C extern declaration is used for calling the pdf libraries
  *form the Cern Libs directly using the previous fortran code.
@@ -40,7 +46,13 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
 
     static Double_t par0, par1, par2, par3, par4;
     static Double_t A1, B1, C1, D1, E1;
-
+    //static TH3F *H3Hist;
+    Int_t bins[4] = {6,5,10,5};
+    Double_t xmins[4] = {1.,0.55,0.,0.};
+    Double_t xmaxs[4] = {4.,0.1,1.,1.5};
+    static THnD H3Hist("h3_hist", "H3 histo", 4, bins, xmins, xmaxs);
+    static THnD H4Hist("h4_hist", "H4 histo", 4, bins, xmins, xmaxs);
+    Double_t values[4];
     if (nc == 1) {
         ConfigFile parameters("parameters");
 
@@ -53,10 +65,31 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
         parameters.readInto(par4, "par4");
 
         parameters.readInto(A1, "A1");
-        parameters.readInto(B1, "B1");
-        parameters.readInto(C1, "C1");
-        parameters.readInto(D1, "D1");
-        parameters.readInto(E1, "E1");
+	parameters.readInto(B1, "B1");
+	parameters.readInto(C1, "C1");
+	parameters.readInto(D1, "D1");
+	parameters.readInto(E1, "E1");
+
+	gSystem->Load("libTree");
+
+	TFile file("newphihist.root");
+	TNtuple *tuple = (TNtuple*)file.Get("AAcAcc_data");
+	Float_t rXb, rQ2, rZh, rPt, rAc, rAcc;
+	tuple->SetBranchAddress("Q2",&rQ2);
+	tuple->SetBranchAddress("Xb",&rXb);
+	tuple->SetBranchAddress("Zh",&rZh);
+	tuple->SetBranchAddress("Ac",&rAc);
+	tuple->SetBranchAddress("Pt",&rPt);
+	tuple->SetBranchAddress("Acc",&rAcc);
+	Int_t entries = tuple->GetEntries();
+	for (int i = 0; i < tuple->GetEntries(); i++){
+		tuple->GetEntry(i);
+		values[0] = rQ2; values[1] = rXb;
+		values[2] = rZh; values[3] = rPt;
+		H3Hist.Fill(values,rAc);
+		H4Hist.Fill(values,rAcc);
+
+	}
     }
 
     Double_t GTMD, SCALE, UPV, DNV, USEA, DSEA, STR, CHM, BOT, TOP, XD, GL;
@@ -136,9 +169,16 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
     if (Z  < 0.1) zv  = 0.1;
 
     Double_t Ebeam, rt, rtz, cterm, m_cos_phi, m_cos_2phi;
+    Double_t bin[4];
+    bin[0] = q2; bin[1] = X; bin[2] = Z; bin[3] = sqrt(pt2);
 
-    H3m = h3(X, q2, Z) * GTMD * pi_thresh;
-    H4m = h4(X, q2, Z) * GTMD * pi_thresh;
+//    std::cout << q2 << " " << X << " " << X << " " << H3Hist.GetBinContent(H3Hist.GetBin(bin)) << std::endl;
+//    std::cout << q2 << " " << X << " " << X << " " << H4Hist.GetBinContent(H4Hist.GetBin(bin))  << std::endl;
+
+    H3m = H3Hist.GetBinContent(H3Hist.GetBin(bin)) * GTMD * pi_thresh;
+    H4m = H4Hist.GetBinContent(H4Hist.GetBin(bin)) * GTMD * pi_thresh;
+//    H3m = h3(X, q2, Z) * GTMD * pi_thresh;
+//    H4m = h4(X, q2, Z) * GTMD * pi_thresh;
 
     // Check that cos(phi) and cos(2phi) are less than 1
     Ebeam   = q2 / (2 * kMassProton * X * Y);
@@ -172,8 +212,8 @@ void SemiInclusiveModel(Double_t  q2,  Double_t  X,
 
 Double_t h3(Double_t X, Double_t q2, Double_t Z)
 {
-    using namespace TMath;
 
+    using namespace TMath;
     // Initialized data
     Double_t q0     =    1.0;
     Double_t lambda =    0.25;

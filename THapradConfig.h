@@ -3,7 +3,6 @@
 
 #include "TROOT.h"
 
-
 class THapradConfig {
 public:
     THapradConfig();
@@ -16,7 +15,6 @@ public:
     Double_t    EpsPhiR(void) const { return fEpsPhiR; };
     Double_t    EpsTau(void) const { return fEpsTau; };
     Double_t    EpsRR(void) const { return fEpsRR; };
-
 
     void        SetPolarization(Int_t type) { fPolType = type; };
     void        SetLepton(Int_t type) { fLepton = type; };

@@ -19,12 +19,12 @@ CXXFLAGS += -g
 endif
 
 ifeq ($(findstring Linux,$(OS_NAME)),Linux)
-CXX       := g++
-CXXFLAGS  += -Wall -fPIC $(ROOTCFLAGS) $(SET_DEBUG)
+CXX       := g++  -fPIC 
+CXXFLAGS  += -Wall $(ROOTCFLAGS) $(SET_DEBUG)
 endif
 
-LD        = g++
-LDFLAGS   = -O2 $(ROOTLDFLAGS) -lgfortran
+LD        = g++ -fPIC
+LDFLAGS   = -O2 $(ROOTLDFLAGS) -lgfortran 
 SOFLAGS   = -Wl,-soname,$(notdir $@) -shared
 
 INCLUDES  := -I.
@@ -70,7 +70,7 @@ include Makefile_depends
 
 
 $(SLIB_DIR)/$(SH_LIB): $(SRC_OBJ) $(DICT_OBJ) $(FSRC_OBJ)
-	$(LD) $(SOFLAGS) $(LDFLAGS) $^ $(LIBS) -o $@
+	$(LD) $(SOFLAGS) $(LDFLAGS)  $^ $(LIBS) -o $@
 
 
 $(DICT_DIR)/%Dict.cxx: %.h

@@ -99,8 +99,13 @@ void TRadCor::CalculateRCFactor(Double_t E, Double_t x, Double_t Q2,
     fInv    = new TLorentzInvariants(fConfig,fKin);
     fHadKin = new THadronKinematics(fConfig,fKin,fInv);
 
-    Double_t S_x = - fKin->Y() / fKin->X();
-    Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + fKin->T();
+    Double_t S_x = - fKin->Y() / fKin->X();//HH: check if it is correct
+    //Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + fKin->T();//HH: check if T is the correct one, if the evaluate is called correctly
+    Double_t Nu2 = SQ(S_x/2/kMassProton);
+    Double_t PlQ2NU = TMath::Sqrt((Nu2 + S_x*x)*(SQ(z)*Nu2 - SQ(kMassPion) - SQ(p_t)));
+    Double_t t_temp = SQ(kMassPion) - S_x*x + 2*(PlQ2NU - Nu2*z);
+    Double_t Mx2 = SQ(kMassProton) + S_x * (1 - fKin->Z()) + t_temp;//HH: check if T is the correct one, if the evaluate is called correctly
+
 
     fKinError = false;
     fParametersError = false;
@@ -207,7 +212,7 @@ Double_t TRadCor::GetFactor3(void)
     if (fKinError || fParametersError) {
         return 0;
     } else {
-        Double_t sigma_obs_f3 = sig_obs + tai[0] + tai[1] / 2;
+        Double_t sigma_obs_f3 = sig_obs + tai[0] + tai[1] / 2.;
 
         return sigma_obs_f3 / sigma_born;
     }

@@ -21,7 +21,7 @@ public:
     Double_t    Pt(void)  const { return fPt; };
     Double_t    Nu(void)  const { return fNu; };
 
-    Double_t    SqNuQ(void)  const { return fNu; };
+    Double_t    SqNuQ(void)  const { return fSqNuQ; };//HH: fNu->fSqNuQ
 
     Double_t    Px2(void) const { return fPx2; };
     Double_t    Ph(void)  const { return fPh; };
